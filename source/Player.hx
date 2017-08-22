@@ -8,13 +8,10 @@ import flixel.math.FlxVelocity;
 import flixel.system.FlxSound;
 import flixel.util.FlxTimer;
 import utils.Tweaking;
+import flixel.math.FlxPoint;
 
 class Player extends FlxSprite
 {
-	// Polishing
-	public var _aaahSound							: FlxSound;
-	public var _bulletSprite						: FlxSprite;
-
 	public function new(?X:Float=0, ?Y:Float=0)
 	{
 		super(X, Y);
@@ -29,12 +26,16 @@ class Player extends FlxSprite
 		animation.add("text", [5, 6], 6, true);
 		animation.add("call", [7, 8], 6, true);
 
-		drag.x = drag.y = 1600;
+		//drag.x = drag.y = 1600;
+		
+		maxVelocity.x = 400;
+		maxVelocity.y = 2000;
+		
+		drag.x = maxVelocity.x * 8;
+		acceleration.y = 3000;
 
-		setSize(8, 6);
-		offset.set(4, 10);
-
-		//_aaahSound = FlxG.sound.load(AssetPaths.aaaah__wav);
+		scale = new FlxPoint(3, 3);
+		updateHitbox();
 	}
 
 	override public function update(elapsed:Float):Void
@@ -42,19 +43,6 @@ class Player extends FlxSprite
 		movement();
 
 		super.update(elapsed);
-	}
-	
-	// TODO: pas e(encore) utilisé
-	public function shoot():FlxSprite
-	{
-		var shootUp:Bool = FlxG.keys.anyPressed([Tweaking.shootUp]);
-		var shootDown:Bool = FlxG.keys.anyPressed([Tweaking.shootDown]);
-		var shootLeft:Bool = FlxG.keys.anyPressed([Tweaking.shootLeft]);
-		var shootRight:Bool = FlxG.keys.anyPressed([Tweaking.shootRight]);
-		
-		var bullet : FlxSprite = new FlxSprite(250, 250);
-		_bulletSprite = new FlxSprite(this.getPosition().x, this.getPosition().y);
-		return _bulletSprite;
 	}
 	
 	/**
@@ -67,74 +55,28 @@ class Player extends FlxSprite
 		var moveLeft:Bool = FlxG.keys.anyPressed([Tweaking.moveLeft]);
 		var moveRight:Bool = FlxG.keys.anyPressed([Tweaking.moveRight]);
 		
-		if (moveUp && moveDown)
+		acceleration.x = 0;
+		if (moveLeft)
 		{
-			moveUp = moveDown = false;
+			acceleration.x -= maxVelocity.x * 6;
+			facing = FlxObject.LEFT;
 		}
-
-		if (moveLeft && moveRight)
+		if (moveRight)
 		{
-			moveLeft = moveRight = false;
+			acceleration.x += maxVelocity.x * 6;
+			facing = FlxObject.RIGHT;
 		}
-
-		if (moveUp || moveDown || moveLeft || moveRight)
+		if (moveUp && isTouching(FlxObject.FLOOR))
 		{
-			var _ma:Float = 0;
-
-			if (moveUp)
-			{
-				_ma = -90;
-				if (moveLeft)
-				{
-					_ma -= 45;
-				}
-				else if (moveRight)
-				{
-					_ma += 45;
-				}
-			}
-			else if (moveDown)
-			{
-				_ma = 90;
-				if (moveLeft)
-				{
-					_ma += 45;
-				}
-				else if (moveRight)
-				{
-					_ma -= 45;
-				}
-			}
-			else if (moveLeft)
-			{
-				_ma = 180;
-				facing = FlxObject.LEFT;
-			}
-			else if (moveRight)
-			{
-				_ma = 0;
-				facing = FlxObject.RIGHT;
-			}
-
-			if (moveLeft)
-			{
-				facing = FlxObject.LEFT;
-			}
-			else if (moveRight)
-			{
-				facing = FlxObject.RIGHT;
-			}
-
-			velocity.set(Tweaking.playerWalkingSpeed, 0);
-			velocity.rotate(FlxPoint.weak(0, 0), _ma);
-			if ((velocity.x != 0 || velocity.y != 0))
-			{
-				animation.play("walk");
-			}
+			velocity.y = -maxVelocity.y / 2;
+		}
+		
+		if (velocity.x != 0)
+		{
+			animation.play("walk");
 		}
 		else
 		{
-			// TODO: le mettre sur son tel !
 			animation.play("idle");
 		}
 	}
