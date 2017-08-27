@@ -20,8 +20,12 @@ class PlayState extends FlxState
 	
 	private static var youDied:Bool = false;
 	
+
+	
+	
 	override public function create():Void 
 	{
+		
 		FlxG.mouse.visible = false;
 		
 		bgColor = 0xffaaaaaa;
@@ -65,6 +69,7 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float):Void 
 	{
 		player.acceleration.x = 0;
+		
 		if (FlxG.keys.anyPressed([LEFT, A]))
 		{
 			player.acceleration.x -= player.maxVelocity.x * 4;
@@ -73,10 +78,17 @@ class PlayState extends FlxState
 		{
 			player.acceleration.x += player.maxVelocity.x * 4;
 		}
-		if (FlxG.keys.anyPressed([W, UP, SPACE]) && player.isTouching(FlxObject.FLOOR))
-		{
-			player.velocity.y = -player.maxVelocity.y / 2;
-		}
+		//if (FlxG.keys.anyPressed([W, UP, SPACE]) )
+		//{
+			//doubleJump++;
+			//if (player.isTouching(FlxObject.FLOOR) || doubleJump < 2)
+			//{
+				//player.velocity.y = -player.maxVelocity.y / 2;
+				//
+				//
+			//}
+			//
+		//}
 		super.update(elapsed);
 		
 		FlxG.overlap(coins, player, getCoin);

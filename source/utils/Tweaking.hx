@@ -8,7 +8,7 @@ class Tweaking
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////// Player
 	public static inline var playerWalkingSpeed							: Float = 150;
-	public static inline var playerSprite								: String = "assets/images/MisterBelly.png";
+	public static inline var playerSprite								: String = "assets/new_images/PlayerTest.png";
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////// Bullets
 	public static inline var bulletSpeed								: Int = 200;
@@ -23,7 +23,7 @@ class Tweaking
 	/////////////////////////////////////////////////////////////////////////////////////////////// Inputs (ça va bouger de fichier)
 	
 	// AZERTY
-	public static inline var moveUp										: FlxKey = FlxKey.Z;
+	public static inline var moveUp										: FlxKey = FlxKey.SPACE;
 	public static inline var moveLeft									: FlxKey = FlxKey.Q;
 	public static inline var moveDown									: FlxKey = FlxKey.S;
 	public static inline var moveRight									: FlxKey = FlxKey.D;	
