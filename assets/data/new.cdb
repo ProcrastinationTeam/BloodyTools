@@ -1,0 +1,57 @@
+{
+	"sheets": [
+		{
+			"name": "learning",
+			"columns": [
+				{
+					"typeStr": "0",
+					"name": "test"
+				},
+				{
+					"typeStr": "2",
+					"name": "active",
+					"display": null
+				},
+				{
+					"typeStr": "7",
+					"name": "pic",
+					"display": null
+				},
+				{
+					"typeStr": "3",
+					"name": "hp"
+				}
+			],
+			"lines": [
+				{
+					"test": "s",
+					"active": false,
+					"pic": "fc6c86474ef4c164a42d186879f39252",
+					"hp": 100
+				},
+				{
+					"test": "a",
+					"active": false,
+					"pic": "",
+					"hp": 0
+				},
+				{
+					"test": "",
+					"active": false,
+					"pic": "",
+					"hp": 0
+				},
+				{
+					"test": "",
+					"active": false,
+					"pic": "",
+					"hp": 0
+				}
+			],
+			"separators": [],
+			"props": {}
+		}
+	],
+	"customTypes": [],
+	"compress": false
+}
