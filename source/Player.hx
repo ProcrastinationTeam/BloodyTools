@@ -31,12 +31,11 @@ class Player extends FlxSprite
 	public var jumpC :Int = 0;
 	public var horizontalSpeed : Int = 1000;
 	public var buttonJumpRelease : Bool = false;
+	public var playerIsGrip 	 :Bool = false;
 
-	
 	//Weapon system
 	public var weaponSprite : FlxSprite;
-	
-	
+
 	public function new(?X:Float=0, ?Y:Float=0)
 	{
 		super(X, Y);
@@ -44,7 +43,7 @@ class Player extends FlxSprite
 		//DEBUG SECTION WATCHER
 		FlxG.watch.add(this, "canDoubleJump", "canDoubleJump");
 		FlxG.watch.add(this, "jumpC", "JumpCount");
-		
+
 		//TIMER DE TEST POUR LE SAUT
 		timerManager = new FlxTimerManager();
 		jumpTimer = new FlxTimer();
@@ -60,8 +59,6 @@ class Player extends FlxSprite
 		animation.add("jump", [3], 30, true);
 		animation.add("fall", [4], 30, true);
 		animation.add("afterfall", [5], 30, true);
-		
-		
 
 		/* A MODIFIER */
 		maxVelocity.x = 400;
@@ -75,24 +72,13 @@ class Player extends FlxSprite
 		//updateHitbox();
 		setSize(6 * 2, 3 * 2);
 		offset.set(2, 18);
-		
-		
+
 		//WEAPON SYSTEM INIT
-		
+
 		weaponSprite = new FlxSprite(this.x, this.y);
 		weaponSprite.makeGraphic(16, 16, FlxColor.RED, false);
 		weaponSprite.visible = false;
 		//weaponSprite.loadGraphic(Tweaking.weaponSprite, true, 16, 16);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 
 	}
 
@@ -241,11 +227,9 @@ class Player extends FlxSprite
 				canDoubleJump = true;
 			}
 		}
-	
-	
-	
-	//IS GROUNDED
-	
+
+		//IS GROUNDED
+
 		if (isTouching(FlxObject.FLOOR))
 		{
 			jumpC = 0;
@@ -255,14 +239,9 @@ class Player extends FlxSprite
 				//animation.play("afterfall");
 			}
 		}
-	
-	
 
-		
-		
-		
 		/**ATTACK**/
-		
+
 		if (FlxG.keys.anyPressed([FlxKey.RIGHT]))
 		{
 			if (!weaponSprite.visible)
@@ -277,30 +256,27 @@ class Player extends FlxSprite
 				weaponSprite.visible = false;
 			}
 		}
-		
-		
-		
-		
-		
+
 		/**MOVE**/
-		
-		
+
 		var moveLeft:Bool = FlxG.keys.anyPressed([Tweaking.moveLeft]);
 		var moveRight:Bool = FlxG.keys.anyPressed([Tweaking.moveRight]);
 
 		acceleration.x = 0;
-
-		if (moveLeft)
+		if (!playerIsGrip)
 		{
-			acceleration.x += -horizontalSpeed ;
-			facing = FlxObject.LEFT;
+			if (moveLeft)
+			{
+				acceleration.x += -horizontalSpeed ;
+				facing = FlxObject.LEFT;
+			}
+			if (moveRight)
+			{
+				acceleration.x += horizontalSpeed ;
+				facing = FlxObject.RIGHT;
+			}
 		}
-		if (moveRight)
-		{
-			acceleration.x += horizontalSpeed ;
-			facing = FlxObject.RIGHT;
-		}
-
+		
 		if (FlxG.keys.anyJustPressed([Tweaking.moveUp]))
 		{
 			trace(" Debut du Jump");
@@ -311,22 +287,35 @@ class Player extends FlxSprite
 
 		if (FlxG.keys.anyPressed([Tweaking.moveUp]))
 		{
-			if (isTouching(FlxObject.FLOOR) && jumpC == 0)
+			if (playerIsGrip)
 			{
-				velocity.y = -jumpingVelocity;
-				jumpC++;
-				buttonJumpRelease = false;
-			}
+				velocity.y = - jumpingVelocity;
+				acceleration.y = 3000;
+				playerIsGrip = false;
 
-			if (canDoubleJump)
+			}
+			else
 			{
-				if (jumpC == 1 && buttonJumpRelease)
+				//SIMPLE SAUT
+				if (isTouching(FlxObject.FLOOR) && jumpC == 0)
 				{
 					velocity.y = -jumpingVelocity;
 					jumpC++;
 					buttonJumpRelease = false;
 				}
+
+				//DOUBLE SAUT
+				if (canDoubleJump)
+				{
+					if (jumpC == 1 && buttonJumpRelease)
+					{
+						velocity.y = -jumpingVelocity;
+						jumpC++;
+						buttonJumpRelease = false;
+					}
+				}
 			}
+
 		}
 
 		if (FlxG.keys.anyJustReleased([Tweaking.moveUp]))
