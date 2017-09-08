@@ -43,7 +43,7 @@ class Player extends FlxSprite
 		//DEBUG SECTION WATCHER
 		FlxG.watch.add(this, "canDoubleJump", "canDoubleJump");
 		FlxG.watch.add(this, "jumpC", "JumpCount");
-
+		FlxG.watch.add(this, "velocity", "vel");
 		//TIMER DE TEST POUR LE SAUT
 		timerManager = new FlxTimerManager();
 		jumpTimer = new FlxTimer();
@@ -64,7 +64,7 @@ class Player extends FlxSprite
 		maxVelocity.x = 400;
 		maxVelocity.y = 2000;
 
-		drag.x = maxVelocity.x * 8;
+		drag.x = maxVelocity.x * 10;
 		acceleration.y = 3000;
 
 		//a rebuild
@@ -261,18 +261,35 @@ class Player extends FlxSprite
 
 		var moveLeft:Bool = FlxG.keys.anyPressed([Tweaking.moveLeft]);
 		var moveRight:Bool = FlxG.keys.anyPressed([Tweaking.moveRight]);
-
+		var moveDown:Bool = FlxG.keys.anyPressed([Tweaking.moveDown]);
+		
 		acceleration.x = 0;
 		if (!playerIsGrip)
 		{
 			if (moveLeft)
 			{
-				acceleration.x += -horizontalSpeed ;
+				if (isTouching(FlxObject.FLOOR))
+				{
+					acceleration.x += -horizontalSpeed ;
+				}
+				else
+				{
+					acceleration.x += -horizontalSpeed * 4 ;
+				}
+				
 				facing = FlxObject.LEFT;
 			}
 			if (moveRight)
 			{
-				acceleration.x += horizontalSpeed ;
+				if (isTouching(FlxObject.FLOOR))
+				{
+					acceleration.x += horizontalSpeed ;
+				}
+				else
+				{
+					acceleration.x += horizontalSpeed * 4 ;
+				}
+				
 				facing = FlxObject.RIGHT;
 			}
 		}
@@ -292,6 +309,8 @@ class Player extends FlxSprite
 				velocity.y = - jumpingVelocity;
 				acceleration.y = 3000;
 				playerIsGrip = false;
+				buttonJumpRelease = false;
+				jumpC++;
 
 			}
 			else
@@ -326,5 +345,39 @@ class Player extends FlxSprite
 			buttonJumpRelease = true;
 		}
 
+		if (velocity.x != 0)
+		{
+			if (moveDown)
+			{
+				animation.play("crouchWalk");
+			}
+			else
+			{
+				animation.play("walk");
+			}
+		}
+		else
+		{
+			if (!moveDown)
+			{
+				animation.play("idle");
+			}
+		}
+		
+		if (velocity.y < 0)
+		{
+
+			animation.play("jump");
+		}
+		else if (velocity.y > 0)
+		{
+			//trace("HIGH : " + -(this.y - initialHeight));
+			animation.play("fall");
+
+		}
+	
+		
+	
+		
 	}
 }

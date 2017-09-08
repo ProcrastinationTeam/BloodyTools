@@ -166,10 +166,13 @@ class PlayState extends FlxState
 		{
 			trace("ON S'AGGRIPPE");
 			player.playerIsGrip = true;
+			player.setPosition(grip.x - 9, grip.y);
+			trace(player.getPosition().toString());
+			player.jumpC = 0;
 			player.acceleration.y = 0;
 			player.velocity.y = 0;
 			
-			player.setPosition(grip.x-9,grip.y-5);
+			//player.setPosition(grip.getGraphicMidpoint().x-5,grip.getGraphicMidpoint().y);
 		}
 		
 		
