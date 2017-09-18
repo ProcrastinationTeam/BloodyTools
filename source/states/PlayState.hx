@@ -1,5 +1,6 @@
 package states; 
 
+import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -27,12 +28,13 @@ class PlayState extends FlxState
 	public var status:FlxText;
 	public var coins:FlxGroup;
 	public var player:Player;
+	public var hero:Hero;
 	public var floor:FlxObject;
 	public var exit:FlxSprite;
 	
 	private static var youDied:Bool = false;
 	
-
+	//public var camera:FlxCamera;
 	
 	public var items:FlxSprite;
 	public var grip :FlxSprite;
@@ -40,11 +42,14 @@ class PlayState extends FlxState
 	
 	override public function create():Void 
 	{
+		//FlxG.worldBounds.set(0,0, 4032, 4032);
 		super.create();
 		//player = new Player(100, 50);
-		
+		//this.camera.setPosition(0, 0);
 		maps = GenerateLevel();
-		
+		//this.camera.setScale(10, 10);
+		//this.camera.setPosition(player.getPosition().x,player.getPosition().y);
+		//camera = new FlxCamera(0, 100, 600, 600, 0);
 		/*
 		var playerPos:Array<FlxPoint> = maps.getTileCoords(3, false);
 		player = new Player(playerPos[0].x, playerPos[0].y);*/
@@ -55,7 +60,7 @@ class PlayState extends FlxState
 		add(player);
 		//add(player);
 		
-		
+		camera.follow(player);
 		
 		//UTILE POUR LE DEBUG
 		FlxG.mouse.visible = true;
@@ -187,11 +192,11 @@ class PlayState extends FlxState
 		var atile = new FlxTile(mps, 1, 16, 16, true, FlxObject.ANY);
 	
 
-		var mapCSV = FlxStringUtil.imageToCSV("assets/data/map2.png", false,1,mapTable);
-		
+		//var mapCSV = FlxStringUtil.imageToCSV("assets/data/mapo.png",false,1,mapTable);
+		trace(mps.toString());
 		var mapTilePath:String = "assets/data/tilezz.png";
-		mps.loadMapFromCSV(mapCSV, mapTilePath, 16, 16);
-		//mps.loadMapFromGraphic("assets/data/map.png", false, 1, [FlxColor.WHITE, FlxColor.BLACK, FlxColor.RED,FlxColor.YELLOW], mapTilePath, 16, 16, OFF, 0, 1, 1);
+		//mps.loadMapFromCSV(mapCSV, mapTilePath, 16, 16);
+		mps.loadMapFromGraphic("assets/data/map2.png", false, 1, [FlxColor.WHITE, FlxColor.BLACK,FlxColor.BLUE, FlxColor.RED,FlxColor.GREEN], mapTilePath, 16, 16, OFF, 0, 1, 1);
 		
 		
 		
@@ -210,10 +215,12 @@ class PlayState extends FlxState
 		}
 		
 		//POUR LES AGGRIP
-		mps.setTileProperties(4, FlxObject.NONE);
-		var gripPos:Array<FlxPoint> = mps.getTileCoords(4, false);
-		for (i in gripPos)
-		{
+		//if (mps.getTileCoords(4, false) != null)
+		//{
+			mps.setTileProperties(4, FlxObject.NONE);
+			var gripPos:Array<FlxPoint> = mps.getTileCoords(4, false);
+			for (i in gripPos)
+			{
 			
 			grip = new Grip(gripPos[0].x+9, gripPos[0].y+5);
 			//grip.loadGraphic("assets/images/batery.png");
@@ -226,7 +233,11 @@ class PlayState extends FlxState
 			//grip.offset.set(15, 4);
 
 			add(grip);
-		}
+			}
+		
+		//}
+		
+		
 		
 		
 		
@@ -243,7 +254,8 @@ class PlayState extends FlxState
 		var gripTile:Int = gripTiles[0];
 		mps.setTileByIndex(gripTile, -1, true);*/
 		
-		
+		//mps.setTileProperties(1, FlxObject.ANY);
+		trace(mps.totalTiles);
 		return mps;
 	}
 	

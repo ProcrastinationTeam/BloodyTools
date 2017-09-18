@@ -362,6 +362,10 @@ class Player extends FlxSprite
 			{
 				animation.play("idle");
 			}
+			else
+			{
+				animation.play("crouchWalk");
+			}
 		}
 		
 		if (velocity.y < 0)
