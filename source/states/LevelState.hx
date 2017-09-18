@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
 import flixel.tile.FlxTile;
@@ -17,6 +18,14 @@ import hud.PlayerHud;
  */
 class LevelState extends FlxState 
 {
+	//WORLD SETTINGS
+	public static var TILE_WIDTH:Int = 16;
+	public static var TILE_HEIGHT:Int = 16;
+	//public static var LEVEL_WIDTH:Int = 50;
+	//public static var LEVEL_HEIGHT:Int = 50;
+	
+	
+	
 	public var maps:FlxTilemap;
 	public var player:Hero;
 	public var floor:FlxObject;
@@ -27,10 +36,17 @@ class LevelState extends FlxState
 	
 	//HUD
 	public var _playerHud:PlayerHud;
+	
+	
+	//SYSTEM ATTACK
+	public var attacks:FlxTypedGroup<FlxSprite>;
+	
 
 	override public function create():Void 
 	{
 		super.create();
+		
+		
 		
 		//UTILE POUR LE DEBUG
 		FlxG.mouse.visible = true;
@@ -38,6 +54,10 @@ class LevelState extends FlxState
 		
 		//GENERATION
 		maps = GenerateLevel();
+		
+		FlxG.worldBounds.width = TILE_WIDTH * maps.widthInTiles;
+		FlxG.worldBounds.height = TILE_HEIGHT * maps.heightInTiles;
+		
 		add(maps);
 		add(player);
 		
@@ -49,6 +69,12 @@ class LevelState extends FlxState
 		//HealthBar
 		_playerHud = new PlayerHud(player);
 		add(_playerHud);
+		
+		
+		
+		//Attack system basic
+		attacks = new FlxTypedGroup<FlxSprite>();
+		
 	
 	}
 	
@@ -62,6 +88,21 @@ class LevelState extends FlxState
 		//FlxG.overlap(player, grip, getGripped);
 		
 		
+		if (attacks.members.length > 0)
+		{
+			FlxG.overlap(player, attacks, onOverlaping);
+			trace("CHECK ATTACK");
+		}
+	
+		if (FlxG.keys.anyJustPressed([FlxKey.A]))
+		{
+			attacks.add(player);
+		}
+		if (FlxG.keys.anyJustPressed([FlxKey.E]))
+		{
+			attacks.remove(player,true);
+		}
+		
 		if (FlxG.keys.anyJustPressed([FlxKey.R]))
 		{
 			FlxG.resetState();
@@ -70,6 +111,11 @@ class LevelState extends FlxState
 		
 		super.update(elapsed);
 		
+	}
+	
+	public function onOverlaping(obj1:FlxObject, obj2:FlxObject)
+	{
+		trace("ON A HIT : " + obj2.toString());
 	}
 	
 	
@@ -87,7 +133,9 @@ class LevelState extends FlxState
 		var mapTilePath:String = "assets/data/tilezz.png";
 		//mps.loadMapFromCSV(mapCSV, mapTilePath, 16, 16);
 		mps.loadMapFromGraphic("assets/data/mapo.png", false, 1, [FlxColor.WHITE, FlxColor.BLACK,FlxColor.BLUE, FlxColor.RED,FlxColor.GREEN], mapTilePath, 16, 16, OFF, 0, 1, 1);
+		trace("LVL WIDTH : " + mps.widthInTiles);
 		
+		trace("LVL HEIGHT : " + mps.heightInTiles);
 		
 		
 		//Chargement de la position de départ du joueur

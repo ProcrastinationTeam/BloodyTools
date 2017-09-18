@@ -3,8 +3,10 @@ package;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.system.FlxAssets.FlxGraphicAsset;
+import flixel.util.FlxCollision;
 import utils.Tweaking;
 
 /**
@@ -13,6 +15,19 @@ import utils.Tweaking;
  */
 class Hero extends FlxSprite 
 {
+	//BASIC STATS
+	public var pHealth:Int = 200;
+	public var maxHealth:Int = 200;
+	public var stamina:Int = 100;
+	public var maxStamina:Int = 100;
+	
+	
+	//PLAYER STATE
+	public var isSprinting:Bool = false;
+	public var isExhausted:Bool = false;
+	
+	
+	//MOVEMENT
 	public var horizontalSpeed:Int = 150;
 	public var maxMoveSpeed:Int = 100;
 	public var jumpingVelocity:Int=500;
@@ -24,6 +39,14 @@ class Hero extends FlxSprite
 	public var playerIsGrip 	 :Bool = false;
 	public var isJumping 		:Bool = false;
 	public var canDoubleJump : Bool = false;
+	
+	//ATTACK SYSTEM
+	public var isVulnerable:Bool = true;
+	
+	
+	//INVENTORY SYSTEM
+	
+	
 	
 	public function new(?X:Float=0, ?Y:Float=0) 
 	{
@@ -39,19 +62,39 @@ class Hero extends FlxSprite
 		this.drag.x = 640;
 		this.maxVelocity.set(120, 200);
 		
+		
+		
+		
+		
+		
 	}
 	
 	override public function update(elapsed:Float):Void
 	{
 		// Version 1 du move
 		movement();
+		attackSystem();
+		
 
-		//move();
-		//weaponSprite.setPosition(this.x, this.y);
 		super.update(elapsed);
 	}
 	
-		private function movement():Void
+	private function attackSystem():Void
+	{
+		if (!isVulnerable)
+		{
+			//if (attacks.members.length > 0)
+			//{
+				//trace("CHECK ATTACK");
+			//}
+			//si touché
+			//if()
+			
+		}
+	}
+	
+	
+	private function movement():Void
 	{
 		/**DEBUG SECTION **\
 		 ******************/
