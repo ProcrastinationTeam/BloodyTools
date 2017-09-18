@@ -58,6 +58,7 @@ class PlayState extends FlxState
 		
 		add(maps);
 		add(player);
+		add(player.weaponSprite);
 		//add(player);
 		
 		camera.follow(player);

@@ -3,11 +3,16 @@ package;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.addons.weapon.FlxWeapon;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxCollision;
+import flixel.util.FlxColor;
 import utils.Tweaking;
+import weapons.Axe;
+import weapons.Sword;
+import weapons.Weapon;
 
 /**
  * ...
@@ -45,7 +50,11 @@ class Hero extends FlxSprite
 	
 	
 	//INVENTORY SYSTEM
+	public var currentEquipedWeapon : Axe;
 	
+	//Weapon system
+	//public var weaponSprite : FlxSprite;
+	public var weaponSprite : Weapon;
 	
 	
 	public function new(?X:Float=0, ?Y:Float=0) 
@@ -62,10 +71,14 @@ class Hero extends FlxSprite
 		this.drag.x = 640;
 		this.maxVelocity.set(120, 200);
 		
+		//WEAPON TEST
 		
 		
+		currentEquipedWeapon = new Axe(this);
 		
-		
+		weaponSprite = currentEquipedWeapon;
+		//weaponSprite.makeGraphic(16, 16, FlxColor.RED, false);
+		weaponSprite.visible = false;
 		
 	}
 	
@@ -74,13 +87,37 @@ class Hero extends FlxSprite
 		// Version 1 du move
 		movement();
 		attackSystem();
-		
+		switchWeapon();
 
 		super.update(elapsed);
 	}
 	
+	private function switchWeapon():Void{
+		if (FlxG.keys.anyJustPressed([FlxKey.P]))
+		{
+			
+			var tempCurrent = new Sword(this);
+			//currentEquipedWeapon = 
+			weaponSprite = tempCurrent;
+			weaponSprite.visible = false;
+		}
+	}
+	
 	private function attackSystem():Void
 	{
+		//FIRST ATTACK TEST
+		if (FlxG.keys.anyJustPressed([FlxKey.K]))
+		{
+			weaponSprite.Attack();
+			weaponSprite.setPosition(this.x, this.y);
+			weaponSprite.visible = true;
+		}
+
+		if (FlxG.keys.anyJustReleased([FlxKey.K]))
+		{
+			weaponSprite.visible = false;
+		}
+		
 		if (!isVulnerable)
 		{
 			//if (attacks.members.length > 0)
@@ -121,20 +158,21 @@ class Hero extends FlxSprite
 
 		/**ATTACK**/
 
-		//if (FlxG.keys.anyPressed([FlxKey.RIGHT]))
-		//{
-			//if (!weaponSprite.visible)
-			//{
-				//weaponSprite.visible = true;
-			//}
-		//}
-		//if (FlxG.keys.anyJustReleased([FlxKey.RIGHT]))
-		//{
-			//if (weaponSprite.visible)
-			//{
-				//weaponSprite.visible = false;
-			//}
-		//}
+		if (FlxG.keys.anyPressed([FlxKey.RIGHT]))
+		{
+			if (!weaponSprite.visible)
+			{
+				trace("ATTACK");
+				weaponSprite.visible = true;
+			}
+		}
+		if (FlxG.keys.anyJustReleased([FlxKey.RIGHT]))
+		{
+			if (weaponSprite.visible)
+			{
+				weaponSprite.visible = false;
+			}
+		}
 
 		/**MOVE**/
 

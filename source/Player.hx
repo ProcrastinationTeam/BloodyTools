@@ -78,6 +78,7 @@ class Player extends FlxSprite
 		weaponSprite = new FlxSprite(this.x, this.y);
 		weaponSprite.makeGraphic(16, 16, FlxColor.RED, false);
 		weaponSprite.visible = false;
+		
 		//weaponSprite.loadGraphic(Tweaking.weaponSprite, true, 16, 16);
 
 	}

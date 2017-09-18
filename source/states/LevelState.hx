@@ -28,6 +28,7 @@ class LevelState extends FlxState
 	
 	public var maps:FlxTilemap;
 	public var player:Hero;
+	public var enemy:Enemy;
 	public var floor:FlxObject;
 	
 	public var items:FlxSprite;
@@ -60,6 +61,10 @@ class LevelState extends FlxState
 		
 		add(maps);
 		add(player);
+		add(player.weaponSprite);
+		
+		enemy = new Enemy(player.getPosition().x + 40, player.getPosition().y);
+		add(enemy);
 		
 		//CAMERA SECTION
 		camera.follow(player);
@@ -86,7 +91,8 @@ class LevelState extends FlxState
 		//FlxG.overlap(items, player, getItem);
 		//
 		//FlxG.overlap(player, grip, getGripped);
-		
+		FlxG.collide(enemy, maps);
+		FlxG.collide(enemy, player);
 		
 		if (attacks.members.length > 0)
 		{
