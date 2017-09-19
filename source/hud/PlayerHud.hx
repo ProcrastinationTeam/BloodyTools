@@ -13,10 +13,20 @@ import flixel.util.FlxColor;
  * ...
  * @author ElRyoGrande
  */
+
+ //HUD GLOBAL DU JOUEUR
+ //Regroupe les différents HUD au même endroit
+ 
 class PlayerHud extends FlxTypedGroup<FlxSprite> 
 {
+	//BARRES ET EMPLACEMENT ITEMS
 	public var _lifeBar					: FlxBar;
 	public var _staminaBar 				: FlxBar;
+	
+	//A TRANSFORMER EN UNIQUE INVENTORY HUD
+	public var _itemsHUDw				: FlxSprite;
+	public var _itemsHUDw2				: FlxSprite;
+	
 	public var _player:Hero;
 	
 	public function new(player:Hero) 
@@ -24,19 +34,44 @@ class PlayerHud extends FlxTypedGroup<FlxSprite>
 		
 		super();
 		
+		
 		_player = player;
 		
+		//BARRE DE VIE
 		_lifeBar = new FlxBar(8, 8, LEFT_TO_RIGHT,100 , 10);
 		_lifeBar.createImageBar("assets/new_images/emptyBar.png", "assets/new_images/fillBar.png", FlxColor.TRANSPARENT, FlxColor.LIME);
+		_lifeBar.scrollFactor.x = 0;
+		_lifeBar.scrollFactor.y = 0;
+		_lifeBar.setRange(0, 100);
+		//_lifeBar.barHeight = 20;
+		_lifeBar.value = 100;
 		add(_lifeBar);
 		
-		_staminaBar = new FlxBar(8, 20, LEFT_TO_RIGHT, 100 , 10);
-		_staminaBar.createImageBar("assets/new_images/emptyBar.png", "assets/new_images/fillBar.png", FlxColor.TRANSPARENT, FlxColor.LIME);
-		add(_staminaBar);
+		//BARRE DE STAMINA
+		_staminaBar = new FlxBar(8, 20, LEFT_TO_RIGHT, 40 , 10);
+		_staminaBar.createImageBar("assets/new_images/emptySBar.png", "assets/new_images/fillSBar.png", FlxColor.TRANSPARENT, FlxColor.LIME);
+		_staminaBar.scrollFactor.x = 0;
+		_staminaBar.scrollFactor.y = 0;
 		_staminaBar.value = 100;
+		add(_staminaBar);
+		
+		
+		//ITEMS
+		_itemsHUDw = new FlxSprite(player.x,player.y);
+		_itemsHUDw.loadGraphic("assets/new_images/inventory.png", false, 34, 16, false);
+		_itemsHUDw.scrollFactor.set(0, 0);
+		_itemsHUDw.setPosition(600, 460);
+		add(_itemsHUDw);
+		
+		//ITEMS
+		_itemsHUDw2 = new FlxSprite(player.x,player.y);
+		_itemsHUDw2.loadGraphic("assets/new_images/inventory.png", false, 34, 16, false);
+		_itemsHUDw2.scrollFactor.set(0, 0);
+		_itemsHUDw2.setPosition(580, 440);
+		add(_itemsHUDw2);
 		
 		//DEBUGGER
-		FlxG.watch.add(_staminaBar, "value", "Value");
+		//FlxG.watch.add(_staminaBar, "value", "Value");
 		
 	}
 	
@@ -116,5 +151,8 @@ class PlayerHud extends FlxTypedGroup<FlxSprite>
 	{
 		_lifeBar.value += 1;
 	}
+	
+	
+
 	
 }

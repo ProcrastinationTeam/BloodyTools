@@ -15,7 +15,7 @@ class Axe extends Weapon
 	public function new(player:Hero) 
 	{
 		_player = player;
-		super(player.x,player.y);
+		super(player,_weaponType);
 		yolo = this.loadGraphic("assets/new_images/axeC64.png", true, 64, 62, false);
 		
 		//this.scale.set(-2, -2);

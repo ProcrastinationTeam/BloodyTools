@@ -1,5 +1,6 @@
 package states;
 
+import enums.ItemType;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -10,7 +11,9 @@ import flixel.math.FlxPoint;
 import flixel.tile.FlxTile;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxColor;
+import haxe.macro.Type;
 import hud.PlayerHud;
+import structs.Item;
 
 /**
  * ...
@@ -31,12 +34,13 @@ class LevelState extends FlxState
 	public var enemy:Enemy;
 	public var floor:FlxObject;
 	
-	public var items:FlxSprite;
+	public var items:Item;
 	public var grip :FlxSprite;
 	
 	
 	//HUD
-	public var _playerHud:PlayerHud;
+	//DOIT PEUT ETRE DISPARAITRE (ON A DEJA LES INFOS DANS LE PLAYER)
+	//public var _playerHud:PlayerHud;
 	
 	
 	//SYSTEM ATTACK
@@ -69,13 +73,13 @@ class LevelState extends FlxState
 		//CAMERA SECTION
 		camera.follow(player);
 		
-		//UI
+		//HUD
+	
+		//_playerHud = new PlayerHud(player);
+		add(player.playerHud);
 		
-		//HealthBar
-		_playerHud = new PlayerHud(player);
-		add(_playerHud);
-		
-		
+		//Inventory
+		add(player.inventory);
 		
 		//Attack system basic
 		attacks = new FlxTypedGroup<FlxSprite>();
@@ -88,9 +92,8 @@ class LevelState extends FlxState
 		player.acceleration.x = 0;
 		
 		FlxG.collide(player, maps);
-		//FlxG.overlap(items, player, getItem);
-		//
-		//FlxG.overlap(player, grip, getGripped);
+		FlxG.overlap(items, player, getItem);
+		
 		FlxG.collide(enemy, maps);
 		FlxG.collide(enemy, player);
 		
@@ -124,6 +127,12 @@ class LevelState extends FlxState
 		trace("ON A HIT : " + obj2.toString());
 	}
 	
+	public function getItem(item:Item, player:Hero):Void
+	{
+		item.kill();
+		player.inventory.addItemToInventory(item);
+	}
+	
 	
 	//ALGO GENERATION MAP
 	
@@ -131,16 +140,15 @@ class LevelState extends FlxState
 	{
 		var mapTable = [FlxColor.WHITE, FlxColor.BLACK, FlxColor.BLUE, FlxColor.RED, FlxColor.GREEN];
 		var mps = new FlxTilemap();
-		var atile = new FlxTile(mps, 1, 16, 16, true, FlxObject.ANY);
+		//var atile = new FlxTile(mps, 1, 16, 16, true, FlxObject.ANY);
 	
 
 		//var mapCSV = FlxStringUtil.imageToCSV("assets/data/mapo.png",false,1,mapTable);
-		trace(mps.toString());
+		//trace(mps.toString());
 		var mapTilePath:String = "assets/data/tilezz.png";
 		//mps.loadMapFromCSV(mapCSV, mapTilePath, 16, 16);
 		mps.loadMapFromGraphic("assets/data/mapo.png", false, 1, [FlxColor.WHITE, FlxColor.BLACK,FlxColor.BLUE, FlxColor.RED,FlxColor.GREEN], mapTilePath, 16, 16, OFF, 0, 1, 1);
 		trace("LVL WIDTH : " + mps.widthInTiles);
-		
 		trace("LVL HEIGHT : " + mps.heightInTiles);
 		
 		
@@ -153,8 +161,8 @@ class LevelState extends FlxState
 		var itemPos:Array<FlxPoint> = mps.getTileCoords(3, false);
 		for (i in itemPos)
 		{
-			items = new FlxSprite(itemPos[0].x, itemPos[0].y);
-			items.loadGraphic("assets/images/batery.png");
+			//UNE ERREUR DANS LES ITEMPOS
+			items = new Item(itemPos[0].x, itemPos[0].y, ItemType.weapon, "axe");
 			add(items);
 		}
 		
@@ -167,14 +175,11 @@ class LevelState extends FlxState
 			{
 			
 			grip = new Grip(gripPos[0].x+9, gripPos[0].y+5);
-			//grip.loadGraphic("assets/images/batery.png");
-			//items.loadGraphic("assets/images/batery.png");
+
 			grip.makeGraphic(16, 16, FlxColor.TRANSPARENT,true);
-//
-			//grip.width = 5;
-			//grip.health = 10;
+
 			grip.setSize(6, 4);
-			//grip.offset.set(15, 4);
+
 
 			add(grip);
 			}

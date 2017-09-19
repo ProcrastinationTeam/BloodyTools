@@ -15,11 +15,10 @@ class Sword extends Weapon
 	public function new(player:Hero) 
 	{
 		_player = player;
-		super(player.x,player.y);
-		yolo = this.loadGraphic("assets/new_images/blade.png", true, 576, 64, false);
+		super(player,_weaponType);
+		yolo = this.loadGraphic("assets/new_images/blade.png", true, 64, 64, false);
 		
-		//this.scale.set(-2, -2);
-		//this.scale.set(0.8, 0.8);
+		
 	}
 	
 	override public function update(elapsed:Float):Void

@@ -1,5 +1,9 @@
 package;
 
+import enums.WeaponType;
+import hud.Hud;
+import hud.PlayerHud;
+import inventory.InGameInventory;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -9,6 +13,8 @@ import flixel.input.keyboard.FlxKey;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxCollision;
 import flixel.util.FlxColor;
+import hud.InventoryHUD;
+import inventory.Inventory;
 import utils.Tweaking;
 import weapons.Axe;
 import weapons.Sword;
@@ -49,8 +55,19 @@ class Hero extends FlxSprite
 	public var isVulnerable:Bool = true;
 	
 	
+	//HUD SYSTEM
+	public var playerHud:PlayerHud;
+	public var HUD:Hud;
+	public var inventoryHUD:InventoryHUD;
+	
 	//INVENTORY SYSTEM
-	public var currentEquipedWeapon : Axe;
+	public var inventory:Inventory;
+	public var igInvent:InGameInventory;
+	
+	//public var currentEquipedWeapon : Sword;
+	public var currentEquipedWeapon : Weapon;
+	
+	
 	
 	//Weapon system
 	//public var weaponSprite : FlxSprite;
@@ -64,20 +81,24 @@ class Hero extends FlxSprite
 		this.scale.set(2, 2);
 		this.setSize(16, 24);
 		this.acceleration.y = 420;
-		//this.drag.set(1000, 0);
+		
 		
 		
 		// Basic player physics
 		this.drag.x = 640;
 		this.maxVelocity.set(120, 200);
 		
+		//HUD
+		playerHud = new PlayerHud(this);
+		
+		
+		//INVENTORY SYSTEM
+		inventory = new Inventory(10,this);
+		
+		
 		//WEAPON TEST
-		
-		
-		currentEquipedWeapon = new Axe(this);
-		
+		currentEquipedWeapon = new Weapon(this,WeaponType.axe);
 		weaponSprite = currentEquipedWeapon;
-		//weaponSprite.makeGraphic(16, 16, FlxColor.RED, false);
 		weaponSprite.visible = false;
 		
 	}
@@ -87,20 +108,25 @@ class Hero extends FlxSprite
 		// Version 1 du move
 		movement();
 		attackSystem();
-		switchWeapon();
+		
+		if (FlxG.keys.anyJustPressed([FlxKey.P]))
+		{
+			
+			weaponSprite.SwitchWeapon(WeaponType.sword);
+			
+			weaponSprite.visible = false;
+
+			//var tempCurrent = new Axe(this);
+			//currentEquipedWeapon = 
+			//weaponSprite = tempCurrent;
+			//weaponSprite.loadGraphic("assets/new_images/axeC64.png", true, 64, 62, false); 
+		}
 
 		super.update(elapsed);
 	}
 	
 	private function switchWeapon():Void{
-		if (FlxG.keys.anyJustPressed([FlxKey.P]))
-		{
-			
-			var tempCurrent = new Sword(this);
-			//currentEquipedWeapon = 
-			weaponSprite = tempCurrent;
-			weaponSprite.visible = false;
-		}
+		
 	}
 	
 	private function attackSystem():Void
