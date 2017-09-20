@@ -67,7 +67,7 @@ class Hero extends FlxSprite
 	public var igInvent:InGameInventory;
 	
 	//public var currentEquipedWeapon : Sword;
-	public var currentEquipedWeapon : Weapon;
+	//public var currentEquipedWeapon : Weapon;
 	
 	
 	
@@ -87,7 +87,7 @@ class Hero extends FlxSprite
 		
 		
 		// Basic player physics
-		this.drag.x = 640;
+		this.drag.x = 640; 
 		this.maxVelocity.set(120, 200);
 		
 		//HUD
@@ -100,10 +100,7 @@ class Hero extends FlxSprite
 		inventory = new Inventory(10,this);
 		
 		
-		//WEAPON TEST
-		currentEquipedWeapon = new Weapon(this,WeaponType.axe);
-		weaponSprite = currentEquipedWeapon;
-		weaponSprite.visible = false;
+		weaponSprite = new Weapon(this, WeaponType.none);
 		
 	}
 	
@@ -116,21 +113,37 @@ class Hero extends FlxSprite
 		if (FlxG.keys.anyJustPressed([FlxKey.P]))
 		{
 			
-			weaponSprite.SwitchWeapon(WeaponType.sword);
-			
-			weaponSprite.visible = false;
+			switchWeapon();		
+			weaponSprite.visible = true;
 
 			//var tempCurrent = new Axe(this);
 			//currentEquipedWeapon = 
 			//weaponSprite = tempCurrent;
 			//weaponSprite.loadGraphic("assets/new_images/axeC64.png", true, 64, 62, false); 
 		}
+		
+		if (FlxG.keys.anyJustPressed([FlxKey.X]))
+		{
+			equipWeapon();
+		}
 
 		super.update(elapsed);
 	}
 	
-	private function switchWeapon():Void{
+	private function equipWeapon():Void{
+		weaponSprite.loadGraphic(inventory.weaponItems.members[0]._skin, true, 64, 62, false);
+		weaponSprite.setPosition(this.x-110, this.y+30 );
+	}
+	
+	private function switchWeapon():Void
+	{
+		//WEAPON TEST
+		//currentEquipedWeapon = new Weapon(this,WeaponType.axe);
+		//weaponSprite.loadGraphic("assets/new_images/axeC64.png", true, 64, 62, false);
 		
+		weaponSprite = inventory.weaponItems.members[0];
+		//trace(inventory.weaponItems.members[0].toString());
+		//weaponSprite.visible = false;
 	}
 	
 	private function attackSystem():Void

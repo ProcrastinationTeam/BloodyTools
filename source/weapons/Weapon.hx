@@ -3,6 +3,7 @@ package weapons;
 import enums.WeaponType;
 import flixel.FlxSprite;
 import flixel.system.FlxAssets.FlxGraphicAsset;
+import flixel.util.FlxColor;
 
 /**
  * ...
@@ -21,18 +22,19 @@ class Weapon extends FlxSprite
 	
 	
 	
-	public var skin:String;
+	public var _skin:String;
 	
 	//public function new(?X:Float=0, ?Y:Float=0) 
 	public function new(player:Hero, weaponT:WeaponType) 
 	{
 		//super(X, Y);
 		super(player.x, player.y);
-		
+		scrollFactor.set(0, 0);
 		//Init everythings
 		_weaponType = weaponT;
 		_damage = 10;
 		_range = 5;
+		_skin = "assets/new_images/axeC64.png";
 		
 		switch (_weaponType) 
 		{
@@ -43,7 +45,9 @@ class Weapon extends FlxSprite
 			case WeaponType.dagger:
 				
 			case WeaponType.spear:
-				
+			
+			case WeaponType.none:
+				makeGraphic(1, 1, FlxColor.TRANSPARENT, false);
 			default:
 				
 		}
@@ -52,6 +56,7 @@ class Weapon extends FlxSprite
 		
 	}
 		
+
 	//public function SwitchWeapon(weapT:WeaponType)
 	//{
 		//trace("SWITCH");
@@ -70,6 +75,7 @@ class Weapon extends FlxSprite
 		//}
 		//
 	//}
+
 	
 	
 	public function Attack()

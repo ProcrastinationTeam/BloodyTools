@@ -47,16 +47,20 @@ class LevelState extends FlxState
 	//public var _playerHud:PlayerHud;
 	
 	
+	//UI
+	public var info:FlxText;
+	
+	
+	
 	//SYSTEM ATTACK
 	public var attacks:FlxTypedGroup<FlxSprite>;
 	
-
+	
 	override public function create():Void 
 	{
 		super.create();
 		
-		
-		
+
 		//UTILE POUR LE DEBUG
 		FlxG.mouse.visible = true;
 		bgColor = 0xffaaaaaa;
@@ -101,6 +105,21 @@ class LevelState extends FlxState
 		//Attack system basic
 		attacks = new FlxTypedGroup<FlxSprite>();
 		
+		
+		
+		
+		//TEST UI
+		
+		info = new FlxText(items.x,items.y + 40 , 80);
+		//info.scrollFactor.set(0, 0); 
+		info.borderColor = 0xff000000;
+		info.borderStyle = SHADOW;
+		info.text = "RAMASSER";
+		info.visible = false;
+		
+		
+		add(info);
+		
 	
 	}
 	
@@ -117,15 +136,18 @@ class LevelState extends FlxState
 			info.visible = false;	
 		}
 
+
 		
 		FlxG.collide(enemy, maps);
 		FlxG.collide(enemy, player);
+	
 		
-		if (attacks.members.length > 0)
-		{
-			FlxG.overlap(player, attacks, onOverlaping);
-			trace("CHECK ATTACK");
-		}
+		//ATTACK SYSTEM DEBUT
+		//if (attacks.members.length > 0)
+		//{
+			//FlxG.overlap(player, attacks, onOverlaping);
+			//trace("CHECK ATTACK");
+		//}
 	
 		if (FlxG.keys.anyJustPressed([FlxKey.A]))
 		{
@@ -150,6 +172,26 @@ class LevelState extends FlxState
 	{
 		trace("ON A HIT : " + obj2.toString());
 	}
+	
+	//TROUVER UNE SOLUTION LORSQU'ON SORS DE LA ZONE
+	
+	
+	//public function pressButton(obj1:FlxObject, obj2:FlxObject):Bool
+	//{
+		//info.setPosition(obj1.x, obj1.y);
+		//info.text = "RAMASSER";
+		//info.visible = true;
+		//
+		//var pressed: Bool = false;
+		//if (FlxG.keys.anyJustPressed([FlxKey.G]))
+		//{
+			//trace("ON APPUI :") ;
+			//pressed = true;
+			//info.visible = false;
+		//}
+		//
+		//return pressed;
+	//}
 	
 	public function getItem(item:Item, player:Hero):Void
 	{

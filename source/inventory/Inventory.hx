@@ -38,12 +38,12 @@ class Inventory extends FlxTypedGroup<FlxSprite>
 		trace("TAILLE INVENTAIRE : " + weaponItems.length);
 		
 		weaponItems.maxSize = 2;
-		weaponItems.add(new Weapon(player, WeaponType.axe));
-		weaponItems.add(new Weapon(player, WeaponType.sword));
+		//weaponItems.add(new Weapon(player, WeaponType.axe));
+		//weaponItems.add(new Weapon(player, WeaponType.sword));
+		//
 		
 		
-		trace("TAILLE INVENTAIRE : " + weaponItems.length);
-		trace(weaponItems.members[0]._weaponType + " , " + weaponItems.members[1]._weaponType);
+		//trace(weaponItems.members[0]._weaponType + " , " + weaponItems.members[1]._weaponType);
 		
 		
 		
@@ -61,7 +61,8 @@ class Inventory extends FlxTypedGroup<FlxSprite>
 				trace("On ajoute un objet d'histoire !");
 			case ItemType.weapon:
 				trace("On ajoute une arme !");
-				//weaponItems.add(item);
+				weaponItems.add(new Weapon(_player, item._weaponType));
+				trace("TAILLE INVENTAIRE : " + weaponItems.length);
 			case ItemType.wearable:
 				trace("On ajoute une armure !");
 			default:
