@@ -90,7 +90,7 @@ class Hero extends FlxSprite
 		this.drag.x = 640; 
 		this.maxVelocity.set(120, 200);
 		
-		//HUD
+		//PLAYER HUD (REGROUPE LES DIFFERENTS HUD) 
 		playerHud = new PlayerHud(this);
 		
 		

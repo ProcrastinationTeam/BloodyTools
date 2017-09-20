@@ -27,6 +27,8 @@ class PlayerHud extends FlxTypedGroup<FlxSprite>
 	public var _itemsHUDw				: FlxSprite;
 	public var _itemsHUDw2				: FlxSprite;
 	
+	public var _item					:FlxSprite;
+	
 	public var _player:Hero;
 	
 	public function new(player:Hero) 
@@ -56,19 +58,32 @@ class PlayerHud extends FlxTypedGroup<FlxSprite>
 		add(_staminaBar);
 		
 		
-		//ITEMS
+		//ITEMS HUD
 		_itemsHUDw = new FlxSprite(player.x,player.y);
 		_itemsHUDw.loadGraphic("assets/new_images/inventory.png", false, 34, 16, false);
 		_itemsHUDw.scrollFactor.set(0, 0);
 		_itemsHUDw.setPosition(600, 460);
 		add(_itemsHUDw);
 		
-		//ITEMS
+		//ITEMS 2 HUD
 		_itemsHUDw2 = new FlxSprite(player.x,player.y);
 		_itemsHUDw2.loadGraphic("assets/new_images/inventory.png", false, 34, 16, false);
 		_itemsHUDw2.scrollFactor.set(0, 0);
 		_itemsHUDw2.setPosition(580, 440);
 		add(_itemsHUDw2);
+		
+		//TEST VERSION : ITEM
+		_item = new FlxSprite(player.x, player.y);
+		_item.loadGraphic("assets/new_images/axe16.png", false, 16, 16, false);
+		//_item = _player.inventory.wearableItems.members[0];
+		_item.scrollFactor.set(0, 0);
+		_item.setPosition(600, 460);
+		//var yolo = _player.inventory.weaponItems.members[0];
+		//yolo.graphic.
+		
+		add(_item);
+		
+		initWeaponSetHUD();
 		
 		//DEBUGGER
 		//FlxG.watch.add(_staminaBar, "value", "Value");
@@ -80,14 +95,43 @@ class PlayerHud extends FlxTypedGroup<FlxSprite>
 		super.update(elapsed);
 		if (FlxG.keys.anyJustPressed([FlxKey.L]))
 		{
-			_lifeBar.value = 100;
-			_lifeBar.updateBar();
+			//_lifeBar.value = 100;
+			//_lifeBar.updateBar();
+			
+			SwitchWeaponSet();
 		}
 		
 		LifeEvolution();
 		StaminaEvolution();
+		_item.updateFramePixels();
 		
 	}
+	
+	//A APPELER AU DEBUT D'UNE SCENE
+	public function initWeaponSetHUD()
+	{
+		var o = new FlxSprite(0, 0);
+		o.loadGraphic("assets/new_images/axeC64.png", false, 64, 62, false);
+		_itemsHUDw.stamp(o,Std.int(_itemsHUDw.x),Std.int(_itemsHUDw.y));
+	}
+	
+	/* param : 1 ou 2 */ 
+	public function ShowWeaponSet(setID:Int)
+	{
+		
+	}
+	
+	public function SwitchWeaponSet()
+	{
+		trace("SWITCH WEAPON SET");
+		
+		//_item = _player.inventory.wearableItems.members[1];
+		_item.stamp(_player.inventory.wearableItems.members[1], 0, 0);
+		trace(_item.graphic);
+		
+	}
+	
+	
 	
 	public function LifeEvolution()
 	{

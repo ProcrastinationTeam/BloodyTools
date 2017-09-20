@@ -47,8 +47,6 @@ class LevelState extends FlxState
 	//public var _playerHud:PlayerHud;
 	
 	
-	//UI
-	public var info:FlxText;
 	
 	
 	
@@ -130,7 +128,7 @@ class LevelState extends FlxState
 		FlxG.collide(player, maps);
 		
 		
-		//INTERACTION WITH OBJECT
+		//INTERACTION WITH OBJECT // MAYBE CREER UNE VARIABLE OVERLAPS A CHECKER POUR LES DIFFERENTS AFFICHAGE
 		if (!FlxG.overlap(items, player, getItem))
 		{
 			info.visible = false;	
