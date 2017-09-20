@@ -8,6 +8,7 @@ import flixel.FlxState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
+import flixel.text.FlxText;
 import flixel.tile.FlxTile;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxColor;
@@ -37,6 +38,9 @@ class LevelState extends FlxState
 	public var items:Item;
 	public var grip :FlxSprite;
 	
+	
+	//UI
+	public var info:FlxText;
 	
 	//HUD
 	//DOIT PEUT ETRE DISPARAITRE (ON A DEJA LES INFOS DANS LE PLAYER)
@@ -73,6 +77,19 @@ class LevelState extends FlxState
 		//CAMERA SECTION
 		camera.follow(player);
 		
+	
+		//UI TEST
+		info = new FlxText(2, 2, 80);
+		//info.scrollFactor.set(0, 0); 
+		info.borderColor = 0xff000000;
+		info.borderStyle = SHADOW;
+		
+		info.visible = false;
+		add(info);
+		
+		
+		
+		
 		//HUD
 	
 		//_playerHud = new PlayerHud(player);
@@ -92,7 +109,14 @@ class LevelState extends FlxState
 		player.acceleration.x = 0;
 		
 		FlxG.collide(player, maps);
-		FlxG.overlap(items, player, getItem);
+		
+		
+		//INTERACTION WITH OBJECT
+		if (!FlxG.overlap(items, player, getItem))
+		{
+			info.visible = false;	
+		}
+
 		
 		FlxG.collide(enemy, maps);
 		FlxG.collide(enemy, player);
@@ -129,8 +153,19 @@ class LevelState extends FlxState
 	
 	public function getItem(item:Item, player:Hero):Void
 	{
-		item.kill();
-		player.inventory.addItemToInventory(item);
+		
+		
+		info.text = "RAMASSER";
+		info.setPosition(item.x, item.y);
+		info.visible = true;
+		
+		
+		if (FlxG.keys.anyJustPressed([FlxKey.G]))
+		{
+			item.kill();
+			player.inventory.addItemToInventory(item);
+		}
+		
 	}
 	
 	

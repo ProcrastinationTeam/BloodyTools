@@ -52,24 +52,24 @@ class Weapon extends FlxSprite
 		
 	}
 		
-	public function SwitchWeapon(weapT:WeaponType)
-	{
-		trace("SWITCH");
-		switch (weapT) 
-		{
-			case WeaponType.axe:
-				this.loadGraphic("assets/new_images/axeC64.png", true, 64, 62, false);
-			case WeaponType.sword:
-				this.loadGraphic("assets/new_images/blade.png", true, 64, 64, false);
-			case WeaponType.dagger:
-				
-			case WeaponType.spear:
-				
-			default:
-				
-		}
-		
-	}
+	//public function SwitchWeapon(weapT:WeaponType)
+	//{
+		//trace("SWITCH");
+		//switch (weapT) 
+		//{
+			//case WeaponType.axe:
+				//this.loadGraphic("assets/new_images/axeC64.png", true, 64, 62, false);
+			//case WeaponType.sword:
+				//this.loadGraphic("assets/new_images/blade.png", true, 64, 64, false);
+			//case WeaponType.dagger:
+				//
+			//case WeaponType.spear:
+				//
+			//default:
+				//
+		//}
+		//
+	//}
 	
 	
 	public function Attack()

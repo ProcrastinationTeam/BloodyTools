@@ -1,6 +1,7 @@
 package;
 
 import enums.WeaponType;
+import flixel.text.FlxText;
 import hud.Hud;
 import hud.PlayerHud;
 import inventory.InGameInventory;
@@ -55,6 +56,7 @@ class Hero extends FlxSprite
 	public var isVulnerable:Bool = true;
 	
 	
+	
 	//HUD SYSTEM
 	public var playerHud:PlayerHud;
 	public var HUD:Hud;
@@ -91,6 +93,8 @@ class Hero extends FlxSprite
 		//HUD
 		playerHud = new PlayerHud(this);
 		
+		
+	
 		
 		//INVENTORY SYSTEM
 		inventory = new Inventory(10,this);
