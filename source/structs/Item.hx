@@ -16,6 +16,8 @@ class Item extends FlxSprite
 	public var _skinName:String;
 	public var _weaponType:WeaponType;
 	
+	//MATCH ENTRE _skinName et _name possible
+	
 	public function new(?X:Float=0, ?Y:Float=0, type:ItemType, name:String) 
 	{
 		super(X, Y);
@@ -23,21 +25,41 @@ class Item extends FlxSprite
 		_type = type;
 		
 		
-		if (_type == ItemType.weapon)
+		switch (_type) 
 		{
-			//a génériser
-			_weaponType = WeaponType.axe; 
-		}
-		else
-		{
-			_weaponType = null;
+			case ItemType.weapon:
+				_weaponType = WeaponType.axe; 
+				//TEST SKIN NAME
+				_skinName = "axeC64";
+				//Changé tous les path
+				var imageName = "assets/new_images/" + _skinName + ".png";
+				this.loadGraphic(imageName, true, 64, 62, false);
+				
+			case ItemType.consumable:
+				_skinName = "potion";
+				var imageName = "assets/new_images/" + _skinName + ".png";
+				this.loadGraphic(imageName, true, 16, 16, false);
+				
+			case ItemType.wearable:
+				
+			case ItemType.story:
+				
+			default:
+				
 		}
 		
-		//TEST SKIN NAME
-		_skinName = "axeC64";
-		//Changé tous les path
-		var imageName = "assets/new_images/" + _skinName + ".png";
-		this.loadGraphic(imageName, true, 64, 62, false);
+		//if (_type == ItemType.weapon)
+		//{
+			////a génériser
+			//
+		//}
+		//else
+		//{
+			//_weaponType = null;
+		//}
+		
+
+		
 		
 		
 		

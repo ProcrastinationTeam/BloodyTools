@@ -3,6 +3,8 @@ package hud;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxSpriteGroup;
+import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.input.keyboard.FlxKey;
 
 
@@ -28,6 +30,10 @@ class PlayerHud extends FlxTypedGroup<FlxSprite>
 	public var _itemsHUDw2				: FlxSprite;
 	
 	public var _item					:FlxSprite;
+	
+	
+	public var _itemIcons : FlxSpriteGroup;
+	
 	
 	public var _player:Hero;
 	
@@ -73,6 +79,9 @@ class PlayerHud extends FlxTypedGroup<FlxSprite>
 		add(_itemsHUDw2);
 		
 		//TEST VERSION : ITEM
+		
+		initWeaponSetHUD();
+		
 		_item = new FlxSprite(player.x, player.y);
 		_item.loadGraphic("assets/new_images/axe16.png", false, 16, 16, false);
 		//_item = _player.inventory.wearableItems.members[0];
@@ -83,7 +92,17 @@ class PlayerHud extends FlxTypedGroup<FlxSprite>
 		
 		add(_item);
 		
-		initWeaponSetHUD();
+		
+		
+		//TEST SPRITE GROUP //-> VA FILER DANS iniWeaponSetHUD()
+		_itemIcons = new FlxSpriteGroup(600, 460, 2);
+		
+		//LES SPRITES DOIVENT PROVENIR DE L'INVENTORY
+		_itemIcons.add(_player.inventory.wearableItems.members[0]);
+		_itemIcons.add(_player.inventory.wearableItems.members[1]);
+		
+		add(_itemIcons);
+		
 		
 		//DEBUGGER
 		//FlxG.watch.add(_staminaBar, "value", "Value");
@@ -103,32 +122,34 @@ class PlayerHud extends FlxTypedGroup<FlxSprite>
 		
 		LifeEvolution();
 		StaminaEvolution();
-		_item.updateFramePixels();
+		//_item.updateFramePixels();
 		
 	}
 	
 	//A APPELER AU DEBUT D'UNE SCENE
 	public function initWeaponSetHUD()
 	{
-		var o = new FlxSprite(0, 0);
-		o.loadGraphic("assets/new_images/axeC64.png", false, 64, 62, false);
-		_itemsHUDw.stamp(o,Std.int(_itemsHUDw.x),Std.int(_itemsHUDw.y));
+		
+		
+		
+		
 	}
 	
+	//VA SURREMENT DISPARAITRE
 	/* param : 1 ou 2 */ 
 	public function ShowWeaponSet(setID:Int)
 	{
 		
 	}
 	
+	//A TESTER EN UNITAIRE AVANT D'IMPLEMENTER
 	public function SwitchWeaponSet()
 	{
+		//_item = _itemIcons.members[1];
+		
 		trace("SWITCH WEAPON SET");
-		
-		//_item = _player.inventory.wearableItems.members[1];
-		_item.stamp(_player.inventory.wearableItems.members[1], 0, 0);
-		trace(_item.graphic);
-		
+		_itemIcons.loadGraphic(_itemIcons.members[1].graphic, true, 16, 16, false);
+		_itemIcons.draw();
 	}
 	
 	
@@ -156,10 +177,7 @@ class PlayerHud extends FlxTypedGroup<FlxSprite>
 				_staminaBar.value += 0.3;
 			}
 		}
-		
-		
-		
-		
+
 		if (_staminaBar.value == 0)
 		{
 			_player.isExhausted = true;
@@ -184,7 +202,6 @@ class PlayerHud extends FlxTypedGroup<FlxSprite>
 	{
 		_staminaBar.value -= value;
 	}
-	
 	
 	public function consumeLife(value:Int)
 	{

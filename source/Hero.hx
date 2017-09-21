@@ -1,6 +1,9 @@
 package;
 
 import enums.WeaponType;
+import flash.display.BitmapData;
+import flixel.graphics.FlxGraphic;
+import flixel.graphics.frames.FlxImageFrame;
 import flixel.text.FlxText;
 import hud.Hud;
 import hud.PlayerHud;
@@ -61,6 +64,11 @@ class Hero extends FlxSprite
 	public var playerHud:PlayerHud;
 	public var HUD:Hud;
 	public var inventoryHUD:InventoryHUD;
+	public var testWeap:FlxSprite;
+	public var weaponIcon :FlxImageFrame;
+	public var grap : FlxGraphic;
+	public var bmap : BitmapData;
+	
 	
 	//INVENTORY SYSTEM
 	public var inventory:Inventory;
@@ -76,6 +84,14 @@ class Hero extends FlxSprite
 	public var weaponSprite : Weapon;
 	
 	
+	
+	/*POUR L'INIT */
+	/* IL FAUT INSTANCIER DANS UN ORDRE PRECIS 
+	 * 1 - La physique du joueur
+	 * 2 - Le graphic du joueur
+	 * 3 - L'inventaire 
+	 * 4 - le HUD
+	 * */
 	public function new(?X:Float=0, ?Y:Float=0) 
 	{
 		super(X, Y);
@@ -85,23 +101,39 @@ class Hero extends FlxSprite
 		this.acceleration.y = 420;
 		
 		
-		
 		// Basic player physics
 		this.drag.x = 640; 
 		this.maxVelocity.set(120, 200);
+	
+		
+		//INVENTORY SYSTEM
+		//Init
+		inventory = new Inventory(10,this);
+		//weaponSprite = new Weapon(this, WeaponType.none);
+		
 		
 		//PLAYER HUD (REGROUPE LES DIFFERENTS HUD) 
 		playerHud = new PlayerHud(this);
 		
 		
-	
+		///
+		//IMPOSSIBLE ACTUELEMENT D'INSTANCIER AVEC UN FLXSPRITE VENANT D'UNE AUTRE CLASSE...
+		///
+		//UI TRY
+		//testWeap = new FlxSprite(this.x, this.y);
+		//testWeap.loadGraphic("assets/new_images/axe16.png", false, 16, 16, false);
+		 
+		//var weaps = new FlxSprite(this.x, this.y);
+		//weaps.loadGraphic("assets/new_images/axe16.png", false, 16, 16, false);
+		//
+		//testWeap = weaps;
 		
-		//INVENTORY SYSTEM
-		inventory = new Inventory(10,this);
-		
-		
-		weaponSprite = new Weapon(this, WeaponType.none);
-		
+		//var o = 
+		//trace(" TYPE : " + o.flixelType);
+		//testWeap = inventory.wearableItems.members[0];
+		//testWeap.setPosition(this.x, this.y);
+		//testWeap.graphic = inventory.wearableItems.members[0].graphic;
+		//testWeap.graphic = inventory.members[0].graphic;
 	}
 	
 	override public function update(elapsed:Float):Void
@@ -110,12 +142,21 @@ class Hero extends FlxSprite
 		movement();
 		attackSystem();
 		
+		//TEST DU SWITCH D'ARME
 		if (FlxG.keys.anyJustPressed([FlxKey.P]))
 		{
+			//testWeap.loadGraphic("assets/new_images/shur.png", false, 16, 16, false);
+			//var weops = new FlxSprite(this.x, this.y);
+			//weops.loadGraphic("assets/new_images/shur.png", false, 16, 16, false);
 			
-			switchWeapon();		
-			weaponSprite.visible = true;
-
+			//testWeap.graphic.
+			//trace("ASSET : " + testWeap.graphic.assetsKey);
+			//testWeap = inventory.wearableItems.members[1];
+			//
+			//
+			//testWeap.setPosition(this.x, this.y);
+			//switchWeapon();		
+			//weaponSprite.visible = true;
 			//var tempCurrent = new Axe(this);
 			//currentEquipedWeapon = 
 			//weaponSprite = tempCurrent;
@@ -130,11 +171,13 @@ class Hero extends FlxSprite
 		super.update(elapsed);
 	}
 	
+	/*NON FONCTIONNEL*/
 	private function equipWeapon():Void{
 		weaponSprite.loadGraphic(inventory.weaponItems.members[0]._skin, true, 64, 62, false);
 		weaponSprite.setPosition(this.x-110, this.y+30 );
 	}
 	
+	/*NON FONCTIONNEL*/
 	private function switchWeapon():Void
 	{
 		//WEAPON TEST
@@ -146,6 +189,7 @@ class Hero extends FlxSprite
 		//weaponSprite.visible = false;
 	}
 	
+	/*NON FONCTIONNEL*/
 	private function attackSystem():Void
 	{
 		//FIRST ATTACK TEST

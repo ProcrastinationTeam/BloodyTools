@@ -55,6 +55,9 @@ class Inventory extends FlxTypedGroup<FlxSprite>
 		
 		wearableItems.add(yoooolo);
 		wearableItems.add(yolot);
+		
+		
+		add(yolot);
 		//trace(weaponItems.members[0]._weaponType + " , " + weaponItems.members[1]._weaponType);
 		
 		

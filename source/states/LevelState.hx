@@ -35,7 +35,11 @@ class LevelState extends FlxState
 	public var enemy:Enemy;
 	public var floor:FlxObject;
 	
+	//ITEMS ET WEAPONS SPAWN
 	public var items:Item;
+	public var itemGroup:FlxTypedGroup<Item>;
+	
+	
 	public var grip :FlxSprite;
 	
 	
@@ -58,7 +62,6 @@ class LevelState extends FlxState
 	{
 		super.create();
 		
-
 		//UTILE POUR LE DEBUG
 		FlxG.mouse.visible = true;
 		bgColor = 0xffaaaaaa;
@@ -71,42 +74,34 @@ class LevelState extends FlxState
 		
 		add(maps);
 		add(player);
-		add(player.weaponSprite);
+		//add(player.weaponSprite);
 		
-		enemy = new Enemy(player.getPosition().x + 40, player.getPosition().y);
-		add(enemy);
+		//ENEMY 
+		//enemy = new Enemy(player.getPosition().x + 40, player.getPosition().y);
+		//add(enemy);
 		
 		//CAMERA SECTION
 		camera.follow(player);
 		
-	
-		//UI TEST
-		info = new FlxText(2, 2, 80);
-		//info.scrollFactor.set(0, 0); 
-		info.borderColor = 0xff000000;
-		info.borderStyle = SHADOW;
-		
-		info.visible = false;
-		add(info);
-		
-		
-		
 		
 		//HUD
-	
 		//_playerHud = new PlayerHud(player);
 		add(player.playerHud);
 		
 		//Inventory
 		add(player.inventory);
 		
+		//TEST WEAPON
+		//add(player.testWeap);
+		
+		
 		//Attack system basic
-		attacks = new FlxTypedGroup<FlxSprite>();
+		//attacks = new FlxTypedGroup<FlxSprite>();
 		
 		
 		
 		
-		//TEST UI
+		//TEST UI //FONCTIONNEL A REFORMATER
 		
 		info = new FlxText(items.x,items.y + 40 , 80);
 		//info.scrollFactor.set(0, 0); 
@@ -114,8 +109,6 @@ class LevelState extends FlxState
 		info.borderStyle = SHADOW;
 		info.text = "RAMASSER";
 		info.visible = false;
-		
-		
 		add(info);
 		
 	
@@ -127,19 +120,15 @@ class LevelState extends FlxState
 		
 		FlxG.collide(player, maps);
 		
-		
 		//INTERACTION WITH OBJECT // MAYBE CREER UNE VARIABLE OVERLAPS A CHECKER POUR LES DIFFERENTS AFFICHAGE
-		if (!FlxG.overlap(items, player, getItem))
+		if (!FlxG.overlap(itemGroup, player, getItem))
 		{
 			info.visible = false;	
 		}
 
+		//FlxG.collide(enemy, maps);
+		//FlxG.collide(enemy, player);
 
-		
-		FlxG.collide(enemy, maps);
-		FlxG.collide(enemy, player);
-	
-		
 		//ATTACK SYSTEM DEBUT
 		//if (attacks.members.length > 0)
 		//{
@@ -147,14 +136,14 @@ class LevelState extends FlxState
 			//trace("CHECK ATTACK");
 		//}
 	
-		if (FlxG.keys.anyJustPressed([FlxKey.A]))
-		{
-			attacks.add(player);
-		}
-		if (FlxG.keys.anyJustPressed([FlxKey.E]))
-		{
-			attacks.remove(player,true);
-		}
+		//if (FlxG.keys.anyJustPressed([FlxKey.A]))
+		//{
+			//attacks.add(player);
+		//}
+		//if (FlxG.keys.anyJustPressed([FlxKey.E]))
+		//{
+			//attacks.remove(player,true);
+		//}
 		
 		if (FlxG.keys.anyJustPressed([FlxKey.R]))
 		{
@@ -171,41 +160,18 @@ class LevelState extends FlxState
 		trace("ON A HIT : " + obj2.toString());
 	}
 	
-	//TROUVER UNE SOLUTION LORSQU'ON SORS DE LA ZONE
-	
-	
-	//public function pressButton(obj1:FlxObject, obj2:FlxObject):Bool
-	//{
-		//info.setPosition(obj1.x, obj1.y);
-		//info.text = "RAMASSER";
-		//info.visible = true;
-		//
-		//var pressed: Bool = false;
-		//if (FlxG.keys.anyJustPressed([FlxKey.G]))
-		//{
-			//trace("ON APPUI :") ;
-			//pressed = true;
-			//info.visible = false;
-		//}
-		//
-		//return pressed;
-	//}
 	
 	public function getItem(item:Item, player:Hero):Void
-	{
-		
-		
+	{	
 		info.text = "RAMASSER";
 		info.setPosition(item.x, item.y);
 		info.visible = true;
-		
 		
 		if (FlxG.keys.anyJustPressed([FlxKey.G]))
 		{
 			item.kill();
 			player.inventory.addItemToInventory(item);
 		}
-		
 	}
 	
 	
@@ -215,14 +181,14 @@ class LevelState extends FlxState
 	{
 		var mapTable = [FlxColor.WHITE, FlxColor.BLACK, FlxColor.BLUE, FlxColor.RED, FlxColor.GREEN];
 		var mps = new FlxTilemap();
-		//var atile = new FlxTile(mps, 1, 16, 16, true, FlxObject.ANY);
+		itemGroup = new FlxTypedGroup<Item>();
 	
 
 		//var mapCSV = FlxStringUtil.imageToCSV("assets/data/mapo.png",false,1,mapTable);
 		//trace(mps.toString());
 		var mapTilePath:String = "assets/data/tilezz.png";
 		//mps.loadMapFromCSV(mapCSV, mapTilePath, 16, 16);
-		mps.loadMapFromGraphic("assets/data/mapo.png", false, 1, [FlxColor.WHITE, FlxColor.BLACK,FlxColor.BLUE, FlxColor.RED,FlxColor.GREEN], mapTilePath, 16, 16, OFF, 0, 1, 1);
+		mps.loadMapFromGraphic("assets/data/mapo2.png", false, 1, [FlxColor.WHITE, FlxColor.BLACK,FlxColor.BLUE, FlxColor.RED,FlxColor.GREEN], mapTilePath, 16, 16, OFF, 0, 1, 1);
 		trace("LVL WIDTH : " + mps.widthInTiles);
 		trace("LVL HEIGHT : " + mps.heightInTiles);
 		
@@ -237,9 +203,22 @@ class LevelState extends FlxState
 		for (i in itemPos)
 		{
 			//UNE ERREUR DANS LES ITEMPOS
-			items = new Item(itemPos[0].x, itemPos[0].y, ItemType.weapon, "axe");
-			add(items);
+			
+			
+			if (i == itemPos[2])
+			{
+				items = new Item(i.x, i.y, ItemType.consumable, "potion");
+			}
+			else
+			{
+				items = new Item(i.x, i.y, ItemType.weapon, "axe");
+		
+			}
+			
+				itemGroup.add(items);
+			
 		}
+		add(itemGroup);
 		
 		//POUR LES AGGRIP
 		//if (mps.getTileCoords(4, false) != null)
@@ -270,16 +249,20 @@ class LevelState extends FlxState
 		var playerTile:Int = playerTiles[0];
 		mps.setTileByIndex(playerTile, -1, true);
 		
+		//FAIRE UN FOR QUI DETRUIIIIIT TOUUUUUT
 		var itemTiles:Array<Int> = mps.getTileInstances(3);
-		var itemTile:Int = itemTiles[0];
-		mps.setTileByIndex(itemTile, -1, true);
+		//var itemTile:Int = itemTiles[0];
+		//mps.setTileByIndex(itemTile, -1, true);
+		mps.setTileByIndex(itemTiles[0], -1, true);
+		mps.setTileByIndex(itemTiles[1], -1, true);
+		mps.setTileByIndex(itemTiles[2], -1, true);
 		
 		/*var gripTiles:Array<Int> = mps.getTileInstances(4);
 		var gripTile:Int = gripTiles[0];
 		mps.setTileByIndex(gripTile, -1, true);*/
 		
 		//mps.setTileProperties(1, FlxObject.ANY);
-		trace(mps.totalTiles);
+		//trace(mps.totalTiles);
 		return mps;
 	}
 	
