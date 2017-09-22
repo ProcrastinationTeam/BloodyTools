@@ -211,7 +211,7 @@ class LevelState extends FlxState
 			}
 			else
 			{
-				items = new Item(i.x, i.y, ItemType.weapon, "axe");
+				items = new Item(i.x, i.y, ItemType.weapon, "axeC64");
 		
 			}
 			

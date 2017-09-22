@@ -64,10 +64,10 @@ class Hero extends FlxSprite
 	public var playerHud:PlayerHud;
 	public var HUD:Hud;
 	public var inventoryHUD:InventoryHUD;
-	public var testWeap:FlxSprite;
-	public var weaponIcon :FlxImageFrame;
-	public var grap : FlxGraphic;
-	public var bmap : BitmapData;
+	//public var testWeap:FlxSprite;
+	//public var weaponIcon :FlxImageFrame;
+	//public var grap : FlxGraphic;
+	//public var bmap : BitmapData;
 	
 	
 	//INVENTORY SYSTEM
@@ -81,7 +81,7 @@ class Hero extends FlxSprite
 	
 	//Weapon system
 	//public var weaponSprite : FlxSprite;
-	public var weaponSprite : Weapon;
+	//public var weaponSprite : Weapon;
 	
 	
 	
@@ -140,7 +140,7 @@ class Hero extends FlxSprite
 	{
 		// Version 1 du move
 		movement();
-		attackSystem();
+		//attackSystem();
 		
 		//TEST DU SWITCH D'ARME
 		if (FlxG.keys.anyJustPressed([FlxKey.P]))
@@ -165,57 +165,57 @@ class Hero extends FlxSprite
 		
 		if (FlxG.keys.anyJustPressed([FlxKey.X]))
 		{
-			equipWeapon();
+			//equipWeapon();
 		}
 
 		super.update(elapsed);
 	}
 	
 	/*NON FONCTIONNEL*/
-	private function equipWeapon():Void{
-		weaponSprite.loadGraphic(inventory.weaponItems.members[0]._skin, true, 64, 62, false);
-		weaponSprite.setPosition(this.x-110, this.y+30 );
-	}
+	//private function equipWeapon():Void{
+		//weaponSprite.loadGraphic(inventory.weaponItems.members[0]._skin, true, 64, 62, false);
+		//weaponSprite.setPosition(this.x-110, this.y+30 );
+	//}
 	
-	/*NON FONCTIONNEL*/
-	private function switchWeapon():Void
-	{
-		//WEAPON TEST
-		//currentEquipedWeapon = new Weapon(this,WeaponType.axe);
-		//weaponSprite.loadGraphic("assets/new_images/axeC64.png", true, 64, 62, false);
-		
-		weaponSprite = inventory.weaponItems.members[0];
-		//trace(inventory.weaponItems.members[0].toString());
-		//weaponSprite.visible = false;
-	}
+	///*NON FONCTIONNEL*/
+	//private function switchWeapon():Void
+	//{
+		////WEAPON TEST
+		////currentEquipedWeapon = new Weapon(this,WeaponType.axe);
+		////weaponSprite.loadGraphic("assets/new_images/axeC64.png", true, 64, 62, false);
+		//
+		//weaponSprite = inventory.weaponItems.members[0];
+		////trace(inventory.weaponItems.members[0].toString());
+		////weaponSprite.visible = false;
+	//}
 	
-	/*NON FONCTIONNEL*/
-	private function attackSystem():Void
-	{
-		//FIRST ATTACK TEST
-		if (FlxG.keys.anyJustPressed([FlxKey.K]))
-		{
-			weaponSprite.Attack();
-			weaponSprite.setPosition(this.x, this.y);
-			weaponSprite.visible = true;
-		}
-
-		if (FlxG.keys.anyJustReleased([FlxKey.K]))
-		{
-			weaponSprite.visible = false;
-		}
-		
-		if (!isVulnerable)
-		{
-			//if (attacks.members.length > 0)
-			//{
-				//trace("CHECK ATTACK");
-			//}
-			//si touché
-			//if()
-			
-		}
-	}
+	///*NON FONCTIONNEL*/
+	//private function attackSystem():Void
+	//{
+		////FIRST ATTACK TEST
+		//if (FlxG.keys.anyJustPressed([FlxKey.K]))
+		//{
+			//weaponSprite.Attack();
+			//weaponSprite.setPosition(this.x, this.y);
+			//weaponSprite.visible = true;
+		//}
+//
+		//if (FlxG.keys.anyJustReleased([FlxKey.K]))
+		//{
+			//weaponSprite.visible = false;
+		//}
+		//
+		//if (!isVulnerable)
+		//{
+			////if (attacks.members.length > 0)
+			////{
+				////trace("CHECK ATTACK");
+			////}
+			////si touché
+			////if()
+			//
+		//}
+	//}
 	
 	
 	private function movement():Void
@@ -245,21 +245,21 @@ class Hero extends FlxSprite
 
 		/**ATTACK**/
 
-		if (FlxG.keys.anyPressed([FlxKey.RIGHT]))
-		{
-			if (!weaponSprite.visible)
-			{
-				trace("ATTACK");
-				weaponSprite.visible = true;
-			}
-		}
-		if (FlxG.keys.anyJustReleased([FlxKey.RIGHT]))
-		{
-			if (weaponSprite.visible)
-			{
-				weaponSprite.visible = false;
-			}
-		}
+		//if (FlxG.keys.anyPressed([FlxKey.RIGHT]))
+		//{
+			//if (!weaponSprite.visible)
+			//{
+				//trace("ATTACK");
+				//weaponSprite.visible = true;
+			//}
+		//}
+		//if (FlxG.keys.anyJustReleased([FlxKey.RIGHT]))
+		//{
+			//if (weaponSprite.visible)
+			//{
+				//weaponSprite.visible = false;
+			//}
+		//}
 
 		/**MOVE**/
 
