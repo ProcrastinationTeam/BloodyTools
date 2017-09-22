@@ -13,7 +13,9 @@ import flixel.tile.FlxTile;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxColor;
 import haxe.macro.Type;
+import hud.InventoryUI;
 import hud.PlayerHud;
+import hud.PopupInventory;
 import structs.Item;
 
 /**
@@ -145,6 +147,17 @@ class LevelState extends FlxState
 			//attacks.remove(player,true);
 		//}
 		
+		
+		
+		//UI TEST (INVENTORY)
+		if (FlxG.keys.anyJustPressed([FlxKey.I]))
+		{
+			//FlxG.switchState(new InventoryUI());
+			openSubState(new PopupInventory());
+			
+		}
+		
+		
 		if (FlxG.keys.anyJustPressed([FlxKey.R]))
 		{
 			FlxG.resetState();
@@ -251,11 +264,17 @@ class LevelState extends FlxState
 		
 		//FAIRE UN FOR QUI DETRUIIIIIT TOUUUUUT
 		var itemTiles:Array<Int> = mps.getTileInstances(3);
+		for (i in itemTiles)
+		{
+				mps.setTileByIndex(i, -1, true);
+		}
+		
 		//var itemTile:Int = itemTiles[0];
 		//mps.setTileByIndex(itemTile, -1, true);
-		mps.setTileByIndex(itemTiles[0], -1, true);
-		mps.setTileByIndex(itemTiles[1], -1, true);
-		mps.setTileByIndex(itemTiles[2], -1, true);
+		
+	
+		//mps.setTileByIndex(itemTiles[1], -1, true);
+		//mps.setTileByIndex(itemTiles[2], -1, true);
 		
 		/*var gripTiles:Array<Int> = mps.getTileInstances(4);
 		var gripTile:Int = gripTiles[0];

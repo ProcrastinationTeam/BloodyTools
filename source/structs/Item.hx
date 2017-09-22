@@ -30,11 +30,11 @@ class Item extends FlxSprite
 			case ItemType.weapon:
 				_weaponType = WeaponType.axe; 
 				//TEST SKIN NAME
-				//_skinName = "axeC64";
-				
+
+				_skinName = "axe16";
 				//Changé tous les path
 				var imageName = "assets/new_images/" + _skinName + ".png";
-				this.loadGraphic(imageName, true, 64, 62, false);
+				this.loadGraphic(imageName, true, 16, 16, false);
 				
 			case ItemType.consumable:
 				//_skinName = "potion";

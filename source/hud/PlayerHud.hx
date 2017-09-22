@@ -95,13 +95,13 @@ class PlayerHud extends FlxTypedGroup<FlxSprite>
 		
 		
 		//TEST SPRITE GROUP //-> VA FILER DANS iniWeaponSetHUD()
-		_itemIcons = new FlxSpriteGroup(600, 460, 2);
+	//	_itemIcons = new FlxSpriteGroup(600, 460, 2);
 		
 		//LES SPRITES DOIVENT PROVENIR DE L'INVENTORY
-		_itemIcons.add(_player.inventory.wearableItems.members[0]);
-		_itemIcons.add(_player.inventory.wearableItems.members[1]);
+	//	_itemIcons.add(_player.inventory.wearableItems.members[0]);
+	//	_itemIcons.add(_player.inventory.wearableItems.members[1]);
 		
-		add(_itemIcons);
+	//	add(_itemIcons);
 		
 		
 		//DEBUGGER

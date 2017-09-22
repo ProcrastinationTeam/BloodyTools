@@ -34,8 +34,5 @@ class Tweaking
 	//public static inline var moveDown									: FlxKey = FlxKey.S;
 	//public static inline var moveRight									: FlxKey = FlxKey.D;
 	
-	public static inline var shootUp									: FlxKey = FlxKey.UP;
-	public static inline var shootLeft									: FlxKey = FlxKey.LEFT;
-	public static inline var shootDown									: FlxKey = FlxKey.DOWN;
-	public static inline var shootRight									: FlxKey = FlxKey.RIGHT;	
+		
 }
