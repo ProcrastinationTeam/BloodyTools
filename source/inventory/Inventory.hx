@@ -45,19 +45,19 @@ class Inventory extends FlxTypedGroup<FlxSprite>
 		
 		
 		//POUR LE TEST AVEC LE HUD DES ARMES
-		wearableItems = new FlxTypedGroup<FlxSprite>();
-		
-		var yoooolo = new FlxSprite(0, 0);
-		yoooolo.loadGraphic("assets/new_images/axe16.png", false, 16, 16, false);
-		
-		var yolot = new FlxSprite(0, 0);
-		yolot.loadGraphic("assets/new_images/shur.png", false, 16, 16, false);
-		
-		wearableItems.add(yoooolo);
-		wearableItems.add(yolot);
-		
-		
-		add(yolot);
+		//wearableItems = new FlxTypedGroup<FlxSprite>();
+		//
+		//var yoooolo = new FlxSprite(0, 0);
+		//yoooolo.loadGraphic("assets/new_images/axe16.png", false, 16, 16, false);
+		//
+		//var yolot = new FlxSprite(0, 0);
+		//yolot.loadGraphic("assets/new_images/shur.png", false, 16, 16, false);
+		//
+		//wearableItems.add(yoooolo);
+		//wearableItems.add(yolot);
+		//
+		//
+		//add(yolot);
 		//trace(weaponItems.members[0]._weaponType + " , " + weaponItems.members[1]._weaponType);
 		
 		
