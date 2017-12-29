@@ -3,6 +3,7 @@ package;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.addons.util.FlxFSM;
 import flixel.math.FlxPoint;
 import flixel.math.FlxVelocity;
 import flixel.system.FlxSound;
@@ -12,6 +13,12 @@ import flixel.math.FlxPoint;
 
 class Player extends FlxSprite
 {
+	
+	var jumping 		: Bool = false;
+	var doubleJumped 	: Bool = false;
+	
+	var fsm 			: FlxFSM<FlxSprite>;
+	
 	public function new(?X:Float=0, ?Y:Float=0)
 	{
 		super(X, Y);
@@ -28,7 +35,7 @@ class Player extends FlxSprite
 
 		//drag.x = drag.y = 1600;
 		
-		maxVelocity.x = 400;
+		maxVelocity.x = 600;
 		maxVelocity.y = 2000;
 		
 		drag.x = maxVelocity.x * 8;
@@ -36,12 +43,17 @@ class Player extends FlxSprite
 
 		scale = new FlxPoint(3, 3);
 		updateHitbox();
+		
+		fsm = new FlxFSM<FlxSprite>(this);
+		fsm.transitions
+			.add(Idle, Jump, Conditions.jump)
+			.start(Idle);
 	}
 
 	override public function update(elapsed:Float):Void
 	{
 		movement();
-
+		//fsm.update(elapsed);
 		super.update(elapsed);
 	}
 	
@@ -50,26 +62,96 @@ class Player extends FlxSprite
 	 */
 	private function movement():Void
 	{
-		var moveUp:Bool = FlxG.keys.anyPressed([Tweaking.moveUp]);
-		var moveDown:Bool = FlxG.keys.anyPressed([Tweaking.moveDown]);
-		var moveLeft:Bool = FlxG.keys.anyPressed([Tweaking.moveLeft]);
-		var moveRight:Bool = FlxG.keys.anyPressed([Tweaking.moveRight]);
+		// https://www.youtube.com/watch?v=hG9SzQxaCm8
+		// dernière partie (euler, interpolation) déjà implémentée par flixel
+		// le double saut avec saut paramètrable est pas très cool avec cette façon (ou alors faut beaucoup tweaker peut être)
 		
-		acceleration.x = 0;
+		var moveUp:Bool = FlxG.keys.anyPressed(Tweaking.moveUpKeys());
+		var moveUpJustPressed:Bool = FlxG.keys.anyJustPressed(Tweaking.moveUpKeys());
+		//var moveDown:Bool = FlxG.keys.anyPressed([Tweaking.moveDown]);
+		var moveLeft:Bool = FlxG.keys.anyPressed(Tweaking.moveLeftKeys());
+		var moveRight:Bool = FlxG.keys.anyPressed(Tweaking.moveRightKeys());
+		
+		// Durée avant hauteur max
+		// th = xh / vx
+		
+		// Impulsion y
+		// v0 = 2 * h * vx / xh
+		
+		// Gravité
+		// g = -2 * h * vx² / xh²
+		
+		var h : Float = 150;
+		var xh : Float = 150;
+		//var vx : Float = velocity.x;
+		var vx : Float = maxVelocity.x;
+		
+		// th = xh / vx => 
+		
+		var v0 : Float = (2 * h * vx) / xh;
+		var v1 : Float = 1 * v0;
+		
+		var g : Float = ( -2 * h * vx * vx) / (xh * xh);
+		
+		if (velocity.y < 0) {
+			// phase ascendante
+			// trace('up');
+			// bon g
+			if (moveUp) {
+				// on maintient la touche de saut, c'est bien
+				// vérifier qu'on a pas lâché à un moment quand même
+			} else {
+				// on maintient pas, plus gros g
+				g *= 4;
+			}
+		} else if(velocity.y > 0) {
+			// phase descendante
+			// trace('down');
+			// changer g
+			g *= 1.2;
+			// éventuellement, baisser temporairement l'acceleration max
+			//maxVelocity.y = 20;
+		} else {
+			// Apex ou idle
+		}
+		
+		//trace(g);
+		acceleration.y = -g;		
+		
 		if (moveLeft)
 		{
-			acceleration.x -= maxVelocity.x * 6;
+			acceleration.x = -maxVelocity.x * 6;
 			facing = FlxObject.LEFT;
 		}
 		if (moveRight)
 		{
-			acceleration.x += maxVelocity.x * 6;
+			acceleration.x = maxVelocity.x * 6;
 			facing = FlxObject.RIGHT;
 		}
-		if (moveUp && isTouching(FlxObject.FLOOR))
+		if (moveUpJustPressed && isTouching(FlxObject.FLOOR))
 		{
-			velocity.y = -maxVelocity.y / 2;
+			//velocity.y = -maxVelocity.y / 2;
+			velocity.y = -v0;
+			jumping = true;
 		}
+		
+		if (moveUpJustPressed && !isTouching(FlxObject.FLOOR) && !doubleJumped) {
+			velocity.y = -v1;
+			doubleJumped = true;
+			//trace('bonjour');
+		}
+		
+		if (isTouching(FlxObject.FLOOR)) {
+			jumping = false;
+			doubleJumped = false;
+		}
+		
+		//trace(velocity.y);
+		
+		//
+		//if (isTouching(FlxObject.FLOOR)) {
+			//maxVelocity.y = 2000;
+		//}
 		
 		if (velocity.x != 0)
 		{
@@ -79,5 +161,33 @@ class Player extends FlxSprite
 		{
 			animation.play("idle");
 		}
+	}
+}
+
+class Conditions {
+	public static function jump(Owner:FlxSprite):Bool {
+		return FlxG.keys.anyJustPressed(Tweaking.moveUpKeys()) && Owner.isTouching(FlxObject.FLOOR);
+	}
+}
+
+// Idle ou marche
+class Idle extends FlxFSMState<FlxSprite> {
+	override public function enter(owner:FlxSprite, fsm:FlxFSM<FlxSprite>):Void {
+		owner.animation.play('idle');
+	}
+	
+	override public function update(elapsed:Float, owner:FlxSprite, fsm:FlxFSM<FlxSprite>):Void {
+		
+	}
+}
+
+// Saut (phase ascendante ? sans le double ?)
+class Jump extends FlxFSMState<FlxSprite> {
+	override public function enter(owner:FlxSprite, fsm:FlxFSM<FlxSprite>):Void {
+		//owner.animation.play("jumping");
+	}
+	
+	override public function update(elapsed:Float, owner:FlxSprite, fsm:FlxFSM<FlxSprite>):Void {
+		//
 	}
 }
