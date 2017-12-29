@@ -216,6 +216,7 @@ class TiledLevel extends TiledMap
 				FlxG.camera.follow(player);
 				state.player = player;
 				group.add(player);
+				group.add(player.weaponSprite);
 				
 			case "floor":
 				var floor = new FlxObject(x, y, o.width, o.height);

@@ -3,121 +3,123 @@ package;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.addons.util.FlxFSM;
+import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
 import flixel.math.FlxVelocity;
 import flixel.system.FlxSound;
+import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import utils.Tweaking;
 import flixel.math.FlxPoint;
 
 class Player extends FlxSprite
 {
-	
-	var jumping 		: Bool = false;
-	var doubleJumped 	: Bool = false;
-	
-	var fsm 			: FlxFSM<FlxSprite>;
-	
+	public var doubleJump :Int = 0;
+	public var JumpC :Int = 0;
+	public var jumpTimer : FlxTimer;
+	public var timerManager : FlxTimerManager;
+	public var jumpingVelocity : Int = 600;
+	public var maxJumpHeight : Float  = 200.0;
+	public var currentHeight : Float ;
+	public var initialHeight : Float ;
+	public var maxHeightReach : Bool  = false;
+	public var isJumping 		:Bool = false;
+
+	//2nd MOVE
+	public var canDoubleJump : Bool = false;
+	public var jumpC :Int = 0;
+	public var horizontalSpeed : Int = 1000;
+	public var buttonJumpRelease : Bool = false;
+	public var playerIsGrip 	 :Bool = false;
+
+	//Weapon system
+	public var weaponSprite : FlxSprite;
+
 	public function new(?X:Float=0, ?Y:Float=0)
 	{
 		super(X, Y);
 
+		//DEBUG SECTION WATCHER
+		FlxG.watch.add(this, "canDoubleJump", "canDoubleJump");
+		FlxG.watch.add(this, "jumpC", "JumpCount");
+		FlxG.watch.add(this, "velocity", "vel");
+		//TIMER DE TEST POUR LE SAUT
+		timerManager = new FlxTimerManager();
+		jumpTimer = new FlxTimer();
+
+		//CHARGEMENT DU SPRITE ET SES ANIMS
 		loadGraphic(Tweaking.playerSprite, true, 16, 16);
 		setFacingFlip(FlxObject.RIGHT, false, false);
 		setFacingFlip(FlxObject.LEFT, true, false);
-
 		animation.add("idle", [0], 10, true);
-		animation.add("walk", [0, 1, 2, 1], 6, true);
-		animation.add("run", [4, 3], 6, true);
-		animation.add("text", [5, 6], 6, true);
-		animation.add("call", [7, 8], 6, true);
+		animation.add("walk", [1], 6, true);
+		animation.add("crouch", [2], 30, true);
+		animation.add("crouchWalk", [6], 30, true);
+		animation.add("jump", [3], 30, true);
+		animation.add("fall", [4], 30, true);
+		animation.add("afterfall", [5], 30, true);
 
-		//drag.x = drag.y = 1600;
-		
-		maxVelocity.x = 600;
+		/* A MODIFIER */
+		maxVelocity.x = 400;
 		maxVelocity.y = 2000;
-		
-		drag.x = maxVelocity.x * 8;
+
+		drag.x = maxVelocity.x * 10;
 		acceleration.y = 3000;
 
-		scale = new FlxPoint(3, 3);
-		updateHitbox();
+		//a rebuild
+		scale = new FlxPoint(2, 2);
+		//updateHitbox();
+		setSize(6 * 2, 3 * 2);
+		offset.set(2, 18);
+
+		//WEAPON SYSTEM INIT
+
+		weaponSprite = new FlxSprite(this.x, this.y);
+		weaponSprite.makeGraphic(16, 16, FlxColor.RED, false);
+		weaponSprite.visible = false;
 		
-		fsm = new FlxFSM<FlxSprite>(this);
-		fsm.transitions
-			.add(Idle, Jump, Conditions.jump)
-			.start(Idle);
+		//weaponSprite.loadGraphic(Tweaking.weaponSprite, true, 16, 16);
+
 	}
 
 	override public function update(elapsed:Float):Void
 	{
-		movement();
-		//fsm.update(elapsed);
+		// Version 1 du move
+		//movement();
+
+		move();
+		//weaponSprite.setPosition(this.x, this.y);
 		super.update(elapsed);
 	}
-	
+
+	public function onTimer(timer:FlxTimer):Void
+	{
+		trace("HELLO");
+	}
+
 	/**
 	 * Gestion des mouvements
 	 */
 	private function movement():Void
 	{
-		// https://www.youtube.com/watch?v=hG9SzQxaCm8
-		// dernière partie (euler, interpolation) déjà implémentée par flixel
-		// le double saut avec saut paramètrable est pas très cool avec cette façon (ou alors faut beaucoup tweaker peut être)
-		
-		var moveUp:Bool = FlxG.keys.anyPressed(Tweaking.moveUpKeys());
-		var moveUpJustPressed:Bool = FlxG.keys.anyJustPressed(Tweaking.moveUpKeys());
-		//var moveDown:Bool = FlxG.keys.anyPressed([Tweaking.moveDown]);
-		var moveLeft:Bool = FlxG.keys.anyPressed(Tweaking.moveLeftKeys());
-		var moveRight:Bool = FlxG.keys.anyPressed(Tweaking.moveRightKeys());
-		
-		// Durée avant hauteur max
-		// th = xh / vx
-		
-		// Impulsion y
-		// v0 = 2 * h * vx / xh
-		
-		// Gravité
-		// g = -2 * h * vx² / xh²
-		
-		var h : Float = 150;
-		var xh : Float = 150;
-		//var vx : Float = velocity.x;
-		var vx : Float = maxVelocity.x;
-		
-		// th = xh / vx => 
-		
-		var v0 : Float = (2 * h * vx) / xh;
-		var v1 : Float = 1 * v0;
-		
-		var g : Float = ( -2 * h * vx * vx) / (xh * xh);
-		
-		if (velocity.y < 0) {
-			// phase ascendante
-			// trace('up');
-			// bon g
-			if (moveUp) {
-				// on maintient la touche de saut, c'est bien
-				// vérifier qu'on a pas lâché à un moment quand même
-			} else {
-				// on maintient pas, plus gros g
-				g *= 4;
+		var moveUp:Bool = FlxG.keys.anyPressed([Tweaking.moveUp]);
+		var moveDown:Bool = FlxG.keys.anyPressed([Tweaking.moveDown]);
+		var moveLeft:Bool = FlxG.keys.anyPressed([Tweaking.moveLeft]);
+		var moveRight:Bool = FlxG.keys.anyPressed([Tweaking.moveRight]);
+
+		acceleration.x = 0;
+
+		if (isTouching(FlxObject.FLOOR))
+		{
+			doubleJump = 0;
+			if (isJumping)
+			{
+				isJumping = false;
+				animation.play("afterfall");
 			}
-		} else if(velocity.y > 0) {
-			// phase descendante
-			// trace('down');
-			// changer g
-			g *= 1.2;
-			// éventuellement, baisser temporairement l'acceleration max
-			//maxVelocity.y = 20;
-		} else {
-			// Apex ou idle
+
 		}
-		
-		//trace(g);
-		acceleration.y = -g;		
-		
+
 		if (moveLeft)
 		{
 			acceleration.x = -maxVelocity.x * 6;
@@ -128,66 +130,258 @@ class Player extends FlxSprite
 			acceleration.x = maxVelocity.x * 6;
 			facing = FlxObject.RIGHT;
 		}
-		if (moveUpJustPressed && isTouching(FlxObject.FLOOR))
+
+		if (moveDown)
 		{
-			//velocity.y = -maxVelocity.y / 2;
-			velocity.y = -v0;
-			jumping = true;
+			animation.play("crouch");
 		}
-		
-		if (moveUpJustPressed && !isTouching(FlxObject.FLOOR) && !doubleJumped) {
-			velocity.y = -v1;
-			doubleJumped = true;
-			//trace('bonjour');
+
+		/* JUMP */
+
+		if (FlxG.keys.anyJustPressed([Tweaking.moveUp]))
+		{
+			trace(" Debut du Jump");
+			jumpTimer.start(100);
+			initialHeight = this.y;
+			isJumping = true;
+
 		}
-		
-		if (isTouching(FlxObject.FLOOR)) {
-			jumping = false;
-			doubleJumped = false;
+
+		if (FlxG.keys.anyPressed([Tweaking.moveUp]))
+		{
+
+			if ((isTouching(FlxObject.FLOOR) || doubleJump < 2) && JumpC == 0)
+			{
+				//velocity.y = -maxVelocity.y / 2;
+				velocity.y = -jumpingVelocity;
+				JumpC++;
+			}
+
+			//trace("Jump Height : " + -(this.y - initialHeight));
+			/*	if (maxJumpHeight < -(this.y - initialHeight) && !maxHeightReach)
+				{
+					trace("END OF THE JUMP");
+					velocity.y = 0;
+					maxHeightReach = true;
+				}*/
+
 		}
-		
-		//trace(velocity.y);
-		
-		//
-		//if (isTouching(FlxObject.FLOOR)) {
-			//maxVelocity.y = 2000;
-		//}
-		
+
+		if (FlxG.keys.anyJustReleased([Tweaking.moveUp]))
+		{
+			JumpC = 0;
+			doubleJump++;
+			if (jumpTimer.elapsedTime < 0.5)
+			{
+				trace("DOWN");
+				velocity.y = 0; //* 9.81 * 3;
+			}
+
+			maxHeightReach = false;
+		}
+
 		if (velocity.x != 0)
 		{
-			animation.play("walk");
+			if (moveDown)
+			{
+				animation.play("crouchWalk");
+			}
+			else
+			{
+				animation.play("walk");
+			}
 		}
 		else
 		{
-			animation.play("idle");
+			if (!moveDown)
+			{
+				animation.play("idle");
+			}
 		}
-	}
-}
 
-class Conditions {
-	public static function jump(Owner:FlxSprite):Bool {
-		return FlxG.keys.anyJustPressed(Tweaking.moveUpKeys()) && Owner.isTouching(FlxObject.FLOOR);
-	}
-}
+		/* JUMP ANIMATION */
+		//trace("Velocity Y  : " + velocity.y);
+		if (velocity.y < 0)
+		{
 
-// Idle ou marche
-class Idle extends FlxFSMState<FlxSprite> {
-	override public function enter(owner:FlxSprite, fsm:FlxFSM<FlxSprite>):Void {
-		owner.animation.play('idle');
+			animation.play("jump");
+		}
+		else if (velocity.y > 0)
+		{
+			//trace("HIGH : " + -(this.y - initialHeight));
+			animation.play("fall");
+
+		}
+
 	}
-	
-	override public function update(elapsed:Float, owner:FlxSprite, fsm:FlxFSM<FlxSprite>):Void {
+
+	private function move():Void
+	{
+		/**DEBUG SECTION **\
+		 ******************/
+
+		if (FlxG.keys.anyPressed([FlxKey.SHIFT]))
+		{
+			if (FlxG.keys.anyPressed([FlxKey.J]))
+			{
+				canDoubleJump = true;
+			}
+		}
+
+		//IS GROUNDED
+
+		if (isTouching(FlxObject.FLOOR))
+		{
+			jumpC = 0;
+			if (isJumping)
+			{
+				isJumping = false;
+				//animation.play("afterfall");
+			}
+		}
+
+		/**ATTACK**/
+
+		if (FlxG.keys.anyPressed([FlxKey.RIGHT]))
+		{
+			if (!weaponSprite.visible)
+			{
+				weaponSprite.visible = true;
+			}
+		}
+		if (FlxG.keys.anyJustReleased([FlxKey.RIGHT]))
+		{
+			if (weaponSprite.visible)
+			{
+				weaponSprite.visible = false;
+			}
+		}
+
+		/**MOVE**/
+
+		var moveLeft:Bool = FlxG.keys.anyPressed([Tweaking.moveLeft]);
+		var moveRight:Bool = FlxG.keys.anyPressed([Tweaking.moveRight]);
+		var moveDown:Bool = FlxG.keys.anyPressed([Tweaking.moveDown]);
 		
-	}
-}
+		acceleration.x = 0;
+		if (!playerIsGrip)
+		{
+			if (moveLeft)
+			{
+				if (isTouching(FlxObject.FLOOR))
+				{
+					acceleration.x += -horizontalSpeed ;
+				}
+				else
+				{
+					acceleration.x += -horizontalSpeed * 4 ;
+				}
+				
+				facing = FlxObject.LEFT;
+			}
+			if (moveRight)
+			{
+				if (isTouching(FlxObject.FLOOR))
+				{
+					acceleration.x += horizontalSpeed ;
+				}
+				else
+				{
+					acceleration.x += horizontalSpeed * 4 ;
+				}
+				
+				facing = FlxObject.RIGHT;
+			}
+		}
+		
+		if (FlxG.keys.anyJustPressed([Tweaking.moveUp]))
+		{
+			trace(" Debut du Jump");
+			jumpTimer.start(100);
+			initialHeight = this.y;
+			isJumping = true;
+		}
 
-// Saut (phase ascendante ? sans le double ?)
-class Jump extends FlxFSMState<FlxSprite> {
-	override public function enter(owner:FlxSprite, fsm:FlxFSM<FlxSprite>):Void {
-		//owner.animation.play("jumping");
-	}
+		if (FlxG.keys.anyPressed([Tweaking.moveUp]))
+		{
+			if (playerIsGrip)
+			{
+				velocity.y = - jumpingVelocity;
+				acceleration.y = 3000;
+				playerIsGrip = false;
+				buttonJumpRelease = false;
+				jumpC++;
+
+			}
+			else
+			{
+				//SIMPLE SAUT
+				if (isTouching(FlxObject.FLOOR) && jumpC == 0)
+				{
+					velocity.y = -jumpingVelocity;
+					jumpC++;
+					buttonJumpRelease = false;
+				}
+
+				//DOUBLE SAUT
+				if (canDoubleJump)
+				{
+					if (jumpC == 1 && buttonJumpRelease)
+					{
+						velocity.y = -jumpingVelocity;
+						jumpC++;
+						buttonJumpRelease = false;
+					}
+				}
+			}
+
+		}
+
+		if (FlxG.keys.anyJustReleased([Tweaking.moveUp]))
+		{
+			//JumpC = 0;
+			doubleJump++;
+			maxHeightReach = false;
+			buttonJumpRelease = true;
+		}
+
+		if (velocity.x != 0)
+		{
+			if (moveDown)
+			{
+				animation.play("crouchWalk");
+			}
+			else
+			{
+				animation.play("walk");
+			}
+		}
+		else
+		{
+			if (!moveDown)
+			{
+				animation.play("idle");
+			}
+			else
+			{
+				animation.play("crouchWalk");
+			}
+		}
+		
+		if (velocity.y < 0)
+		{
+
+			animation.play("jump");
+		}
+		else if (velocity.y > 0)
+		{
+			//trace("HIGH : " + -(this.y - initialHeight));
+			animation.play("fall");
+
+		}
 	
-	override public function update(elapsed:Float, owner:FlxSprite, fsm:FlxFSM<FlxSprite>):Void {
-		//
+		
+	
+		
 	}
 }
