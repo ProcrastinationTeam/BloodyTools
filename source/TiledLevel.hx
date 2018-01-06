@@ -1,5 +1,6 @@
 package;
 
+import flash.geom.Point;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -13,10 +14,12 @@ import flixel.addons.editors.tiled.TiledTileLayer;
 import flixel.addons.editors.tiled.TiledTileSet;
 import flixel.addons.editors.tiled.TiledTilePropertySet;
 import flixel.group.FlxGroup;
+import flixel.math.FlxPoint;
 import flixel.tile.FlxTilemap;
 import flixel.addons.tile.FlxTilemapExt;
 import flixel.addons.tile.FlxTileSpecial;
 import haxe.io.Path;
+import states.GameState;
 import states.PlayState;
 
 /**
@@ -31,20 +34,35 @@ class TiledLevel extends TiledMap
 	// Array of tilemaps used for collision
 	public var foregroundTiles:FlxGroup;
 	public var objectsLayer:FlxGroup;
+	public var midgroundLayer:FlxGroup;
 	public var backgroundLayer:FlxGroup;
 	private var collidableTileLayers:Array<FlxTilemap>;
+	
+	//Player utils
+	public var playerPos : FlxPoint;
+	
 	
 	// Sprites of images layers
 	public var imagesLayer:FlxGroup;
 	
-	public function new(tiledLevel:Dynamic, state:PlayState)
+	public function new(tiledLevel:Dynamic, state:GameState)
 	{
 		super(tiledLevel);
+		
+		for (t in tilesetArray)
+		{
+			trace(t.name);
+			trace(t.numTiles);
+			trace(t.tileProps.length);
+			trace(t.properties);
+		
+		}
 		
 		imagesLayer = new FlxGroup();
 		foregroundTiles = new FlxGroup();
 		objectsLayer = new FlxGroup();
 		backgroundLayer = new FlxGroup();
+		midgroundLayer = new FlxGroup();
 		
 		FlxG.camera.setScrollBoundsRect(0, 0, fullWidth, fullHeight, true);
 		
@@ -85,7 +103,7 @@ class TiledLevel extends TiledMap
 			
 			if (tileLayer.properties.contains("animated"))
 			{
-				var tileset = tilesets["level"];
+				var tileset = tilesets["frog"];
 				var specialTiles:Map<Int, TiledTilePropertySet> = new Map();
 				for (tileProp in tileset.tileProps)
 				{
@@ -108,10 +126,21 @@ class TiledLevel extends TiledMap
 			{
 				backgroundLayer.add(tilemap);
 			}
+			else if (tileLayer.properties.contains("midground"))
+			{
+				midgroundLayer.add(tilemap);
+			}
 			else
 			{
+				for (t in tileLayer.tileArray)
+				{
+					
+				}
+				
 				if (collidableTileLayers == null)
+				{
 					collidableTileLayers = new Array<FlxTilemap>();
+				}
 				
 				foregroundTiles.add(tilemap);
 				collidableTileLayers.push(tilemap);
@@ -131,7 +160,7 @@ class TiledLevel extends TiledMap
 		return special;
 	}
 	
-	public function loadObjects(state:PlayState)
+	public function loadObjects(state:GameState)
 	{
 		for (layer in layers)
 		{
@@ -156,6 +185,8 @@ class TiledLevel extends TiledMap
 					loadObject(state, o, objectLayer, objectsLayer);
 				}
 			}
+			
+			
 		}
 	}
 	
@@ -200,7 +231,7 @@ class TiledLevel extends TiledMap
 		backgroundLayer.add(decoSprite);
 	}
 	
-	private function loadObject(state:PlayState, o:TiledObject, g:TiledObjectLayer, group:FlxGroup)
+	private function loadObject(state:GameState, o:TiledObject, g:TiledObjectLayer, group:FlxGroup)
 	{
 		var x:Int = o.x;
 		var y:Int = o.y;
@@ -212,28 +243,29 @@ class TiledLevel extends TiledMap
 		switch (o.type.toLowerCase())
 		{
 			case "player_start":
-				var player = new Player(x, y - 64);
-				FlxG.camera.follow(player);
-				state.player = player;
-				group.add(player);
-				group.add(player.weaponSprite);
+				playerPos = new FlxPoint(x, y);
+				//var player = new Player(x, y - 5);
+				//FlxG.camera.follow(player);
+				//state.player = player;
+				//group.add(player);
+				//group.add(player.weaponSprite);
 				
 			case "floor":
 				var floor = new FlxObject(x, y, o.width, o.height);
 				state.floor = floor;
 				
-			case "coin":
-				var tileset = g.map.getGidOwner(o.gid);
-				var coin = new FlxSprite(x, y, c_PATH_LEVEL_TILESHEETS + tileset.imageSource);
-				state.coins.add(coin);
+			//case "coin":
+				//var tileset = g.map.getGidOwner(o.gid);
+				//var coin = new FlxSprite(x, y, c_PATH_LEVEL_TILESHEETS + tileset.imageSource);
+				//state.coins.add(coin);
 				
-			case "exit":
-				// Create the level exit
-				var exit = new FlxSprite(x, y);
-				exit.makeGraphic(32, 32, 0xff3f3f3f);
-				exit.exists = false;
-				state.exit = exit;
-				group.add(exit);
+			//case "exit":
+				//// Create the level exit
+				//var exit = new FlxSprite(x, y);
+				//exit.makeGraphic(32, 32, 0xff3f3f3f);
+				//exit.exists = false;
+				//state.exit = exit;
+				//group.add(exit);
 		}
 	}
 
